@@ -1300,7 +1300,11 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                 <span className="text-sm font-medium text-gray-700">税费</span>
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
                   <div className="flex items-center gap-1"><span className="text-gray-600">按合计</span><NumberInput className="h-8 w-16 text-sm px-2 border rounded" value={otherExpenses.taxPercent ?? 1} onChange={(v) => updateData({ otherExpenses: { ...otherExpenses, taxPercent: v } })} /><span className="text-gray-500">%</span></div>
-                  <div className="flex items-center gap-2"><span className="text-xs text-gray-500 whitespace-nowrap">税基数</span><NumberInput className="h-8 w-32 text-sm px-2 border rounded" value={otherExpenses.taxBase || qSubtotal_m} onChange={(v) => updateData({ otherExpenses: { ...otherExpenses, taxBase: v } })} /><span className="text-gray-500">元</span></div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-gray-500 whitespace-nowrap">税基数</span>
+                    <span className="bg-gray-200 px-3 py-1 rounded font-mono font-medium">{formatMoney(qSubtotal_m)}</span>
+                    <span className="text-xs text-gray-400">(等于报价小计)</span>
+                  </div>
                   <div className="flex items-center gap-1"><span className="text-gray-400">=</span><span className="text-base font-semibold text-gray-900">{formatMoney(tax)}</span></div>
                 </div>
               </div>
