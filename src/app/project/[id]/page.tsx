@@ -338,7 +338,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
       ? (otherExpenses.serviceFeePerPerson || 0) * (otherExpenses.serviceFeeDays || 1) * serviceFeePeople_m
       : calculateServiceFee(serviceFeeBase_m, otherExpenses.serviceFeePercent || 0);
 
-    const taxBase_m = otherExpenses.taxBase || qSubtotal_m;
+    const taxBase_m = qSubtotal_m;
     const tax = taxBase_m * (otherExpenses.taxPercent ?? 1) / 100;
 
     const totalPrice = qSubtotal_m + serviceFeeAmount + tax;
@@ -1715,16 +1715,6 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                 <div className="flex justify-between py-2 border-b border-gray-100 items-center">
                   <span className="text-gray-600 font-medium">税费 ({otherExpenses.taxPercent ?? 1}%)</span>
                   <div className="flex items-center gap-2">
-                    {isQuoteEditing && (
-                      <div className="flex items-center gap-1 mr-2">
-                        <span className="text-xs text-gray-400">税基:</span>
-                        <NumberInput 
-                          className="h-6 w-24 text-xs border rounded" 
-                          value={otherExpenses.taxBase ?? stats.taxBase_m} 
-                          onChange={(v) => updateData({ otherExpenses: { ...otherExpenses, taxBase: v } })} 
-                        />
-                      </div>
-                    )}
                     <span className="font-medium">{formatMoney(tax)}</span>
                   </div>
                 </div>
