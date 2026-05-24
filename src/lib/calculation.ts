@@ -43,13 +43,22 @@ export function calculateServiceFeePerPerson(perPerson: number, days: number, to
 }
 
 export function calculateCostSummary(data: ProjectData): CostSummary {
-  const { coreConfig, dailyExpenses, otherExpenses } = data;
-  const totalClients = coreConfig.studentCount + coreConfig.parentCount + coreConfig.teacherCount;
-  const totalStaff = coreConfig.staffMembers.reduce((sum, member) => sum + member.count, 0);
+  const { coreConfig, dailyExpenses = [], otherExpenses } = data || {};
+  
+  if (!coreConfig || !otherExpenses) {
+    return {
+      totalClients: 0, totalStaff: 0,
+      totalAccommodation: 0, totalMeal: 0, totalBus: 0, totalStaffFee: 0, totalSingleItems: 0, totalOtherExpenses: 0,
+      totalCost: 0, avgCostPerClient: 0, dailyBreakdown: [],
+    };
+  }
+
+  const totalClients = (coreConfig.studentCount || 0) + (coreConfig.parentCount || 0) + (coreConfig.teacherCount || 0);
+  const totalStaff = (coreConfig.staffMembers || []).reduce((sum, member) => sum + (member?.count || 0), 0);
 
   let totalAccommodation = 0;
   dailyExpenses.forEach((day, index) => {
-    if (index >= coreConfig.accommodationDays) return;
+    if (index >= (coreConfig.accommodationDays || 0)) return;
     const twinCount = day.twinRoomCount ?? coreConfig.twinRoom?.countClient ?? 0;
     const twinPrice = day.twinRoomPrice ?? coreConfig.twinRoom?.price ?? 0;
     const kingCount = day.kingRoomCount ?? coreConfig.kingRoom?.countClient ?? 0;
@@ -75,24 +84,27 @@ export function calculateCostSummary(data: ProjectData): CostSummary {
   });
 
   const totalBus = coreConfig.busFee || 0;
-  const otherTransportsTotal = (coreConfig.otherTransports || []).reduce((sum, t) => sum + t.price * t.count, 0);
+  const otherTransportsTotal = (coreConfig.otherTransports || []).reduce((sum, t) => sum + (t?.price || 0) * (t?.count || 0), 0);
   const totalTransport = totalBus + otherTransportsTotal;
 
   let totalStaffFee = 0;
   dailyExpenses.forEach(day => {
-    coreConfig.staffMembers.forEach(member => {
-      const dailyFee = day.staffFees[member.id] ?? member.dailyFee;
-      totalStaffFee += dailyFee * member.count;
+    (coreConfig.staffMembers || []).forEach(member => {
+      if (!member) return;
+      const dailyFee = (day.staffFees && day.staffFees[member.id] !== undefined) ? day.staffFees[member.id] : (member.dailyFee || 0);
+      totalStaffFee += dailyFee * (member.count || 0);
     });
     (day.staffMembers || []).forEach(member => {
-      totalStaffFee += member.dailyFee * member.count;
+      if (!member) return;
+      totalStaffFee += (member.dailyFee || 0) * (member.count || 0);
     });
   });
 
   let totalSingleItems = 0;
   dailyExpenses.forEach(day => {
-    day.singleItems.forEach(item => {
-      totalSingleItems += item.totalPrice || (item.price * item.count);
+    (day.singleItems || []).forEach(item => {
+      if (!item) return;
+      totalSingleItems += item.totalPrice || ((item.price || 0) * (item.count || 0));
     });
   });
 
@@ -102,22 +114,24 @@ export function calculateCostSummary(data: ProjectData): CostSummary {
 
   const dailyBreakdown: DailyCostBreakdown[] = dailyExpenses.map((day, dayIndex) => {
     let dayStaffFee = 0;
-    coreConfig.staffMembers.forEach(member => {
-      const dailyFee = day.staffFees[member.id] ?? member.dailyFee;
-      dayStaffFee += dailyFee * member.count;
+    (coreConfig.staffMembers || []).forEach(member => {
+      if (!member) return;
+      const dailyFee = (day.staffFees && day.staffFees[member.id] !== undefined) ? day.staffFees[member.id] : (member.dailyFee || 0);
+      dayStaffFee += dailyFee * (member.count || 0);
     });
     (day.staffMembers || []).forEach(member => {
-      dayStaffFee += member.dailyFee * member.count;
+      if (!member) return;
+      dayStaffFee += (member.dailyFee || 0) * (member.count || 0);
     });
-    const daySingleItems = day.singleItems.reduce((sum, item) =>
-      sum + (item.totalPrice || item.price * item.count), 0);
+    const daySingleItems = (day.singleItems || []).reduce((sum, item) =>
+      sum + (item?.totalPrice || (item?.price || 0) * (item?.count || 0)), 0);
     const lunch = day.lunch || DEFAULT_MEAL_CONFIG;
     const dinner = day.dinner || DEFAULT_MEAL_CONFIG;
     const lunchAmount = calculateMealAmount(lunch, coreConfig, totalClients, totalStaff);
     const dinnerAmount = calculateMealAmount(dinner, coreConfig, totalClients, totalStaff);
 
     let dayAccommodation = 0;
-    if (dayIndex < coreConfig.accommodationDays) {
+    if (dayIndex < (coreConfig.accommodationDays || 0)) {
       const twinCount = day.twinRoomCount ?? coreConfig.twinRoom?.countClient ?? 0;
       const twinPrice = day.twinRoomPrice ?? coreConfig.twinRoom?.price ?? 0;
       const kingCount = day.kingRoomCount ?? coreConfig.kingRoom?.countClient ?? 0;
@@ -131,7 +145,8 @@ export function calculateCostSummary(data: ProjectData): CostSummary {
         const staffRoomPrice = day.staffRoomPrice ?? coreConfig.staffRoomPrice ?? 0;
         staffAccommodation = staffRoomCount * staffRoomPrice;
       }
-      dayAccommodation = clientAccommodation + staffAccommodation    }
+      dayAccommodation = clientAccommodation + staffAccommodation;
+    }
 
     const dailyTotal = dayAccommodation + lunchAmount + dinnerAmount + dayStaffFee + daySingleItems;
     return {
