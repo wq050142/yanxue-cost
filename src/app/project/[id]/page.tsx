@@ -421,6 +421,11 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
       newOtherExpenses.taxPercent = 1;
       needsUpdate = true;
     }
+    // 强制初始化服务费模式
+    if (!newOtherExpenses.serviceFeeMode) {
+      newOtherExpenses.serviceFeeMode = 'percent';
+      needsUpdate = true;
+    }
 
     // 4. 迁移旧的 otherExpenses 格式
     newOtherExpenses.otherExpenses = newOtherExpenses.otherExpenses.map((item: any) => {
