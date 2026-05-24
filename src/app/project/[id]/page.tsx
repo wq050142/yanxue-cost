@@ -338,7 +338,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
       ? (otherExpenses.serviceFeePerPerson || 0) * (otherExpenses.serviceFeeDays || 1) * serviceFeePeople_m
       : calculateServiceFee(serviceFeeBase_m, otherExpenses.serviceFeePercent || 0);
 
-    const taxBase_m = otherExpenses.taxBase || serviceFeeBase_m;
+    const taxBase_m = otherExpenses.taxBase || qSubtotal_m;
     const tax = taxBase_m * (otherExpenses.taxPercent ?? 1) / 100;
 
     const totalPrice = qSubtotal_m + serviceFeeAmount + tax;
