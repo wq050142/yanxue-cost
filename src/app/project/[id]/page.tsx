@@ -1523,7 +1523,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                         if (dayAcc <= 0) return null;
                         return (
                           <div key={day.day} className="py-1">
-                            <div className="flex justify-between font-medium text-gray-700"><span>D{day.day} {ACCOMMODATION_TYPE_LABELS[day.accommodationType || coreConfig.accommodationType]}</span><span>{formatMoney(dayAcc)}</span></div>
+                            <div className="flex justify-between font-medium text-gray-700"><span>D{day.day} {ACCOMMODATION_TYPE_LABELS[(day.accommodationType || coreConfig.accommodationType) as AccommodationType]}</span><span>{formatMoney(dayAcc)}</span></div>
                             <div className="text-gray-500 pl-2">
                               {isQuoteEditing ? (
                                 <div className="flex flex-wrap gap-2 mt-1">
