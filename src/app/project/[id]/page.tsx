@@ -338,7 +338,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
       ? (otherExpenses.serviceFeePerPerson || 0) * (otherExpenses.serviceFeeDays || 1) * serviceFeePeople_m
       : calculateServiceFee(serviceFeeBase_m, otherExpenses.serviceFeePercent || 0);
 
-    const taxBase_m = otherExpenses.taxBase || qSubtotal_m;
+    const taxBase_m = otherExpenses.taxBase || serviceFeeBase_m;
     const tax = taxBase_m * (otherExpenses.taxPercent ?? 1) / 100;
 
     const totalPrice = qSubtotal_m + serviceFeeAmount + tax;
@@ -349,7 +349,8 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
       totalClients, totalStaff, totalPeople, summary, qSubtotal_m, 
       serviceFeeAmount, tax, totalPrice, finalPrice, pricePerClient,
       quoteAcc_m, quoteMeal_m, quoteBus_m, quoteSingle_m, quoteOther_m, 
-      quoteStaffFee_m, insuranceQ_m, materialsQ_m
+      quoteStaffFee_m, insuranceQ_m, materialsQ_m,
+      taxBase_m // 将计算出的实际税基也返回
     };
   }, [projectData, discount]);
 
@@ -1719,7 +1720,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                         <span className="text-xs text-gray-400">税基:</span>
                         <NumberInput 
                           className="h-6 w-24 text-xs border rounded" 
-                          value={otherExpenses.taxBase ?? qSubtotal_m} 
+                          value={otherExpenses.taxBase ?? stats.taxBase_m} 
                           onChange={(v) => updateData({ otherExpenses: { ...otherExpenses, taxBase: v } })} 
                         />
                       </div>
