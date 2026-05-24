@@ -1711,7 +1711,22 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                     : <span className="text-gray-600">服务费 ({otherExpenses.serviceFeePercent}%)</span>}
                   <span className="font-medium">{formatMoney(serviceFeeAmount)}</span>
                 </div>
-                <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600">税费 ({otherExpenses.taxPercent ?? 1}%)</span><span className="font-medium">{formatMoney(tax)}</span></div>
+                <div className="flex justify-between py-2 border-b border-gray-100 items-center">
+                  <span className="text-gray-600 font-medium">税费 ({otherExpenses.taxPercent ?? 1}%)</span>
+                  <div className="flex items-center gap-2">
+                    {isQuoteEditing && (
+                      <div className="flex items-center gap-1 mr-2">
+                        <span className="text-xs text-gray-400">税基:</span>
+                        <NumberInput 
+                          className="h-6 w-24 text-xs border rounded" 
+                          value={otherExpenses.taxBase ?? qSubtotal_m} 
+                          onChange={(v) => updateData({ otherExpenses: { ...otherExpenses, taxBase: v } })} 
+                        />
+                      </div>
+                    )}
+                    <span className="font-medium">{formatMoney(tax)}</span>
+                  </div>
+                </div>
                 <div className="flex justify-between py-2.5 bg-gray-50 rounded mt-2 px-3"><span className="font-semibold text-gray-800">报价合计</span><span className="font-bold text-gray-900 text-xl">{formatMoney(totalPrice)}</span></div>
                 <div className="flex justify-between py-2.5 bg-gray-100 rounded mt-2 px-3"><span className="font-bold text-gray-800">应付金额</span><span className="font-bold text-gray-900 text-2xl">{formatMoney(finalPrice)}</span></div>
                 <div className="flex justify-between items-center py-2 text-gray-500"><span className="flex-shrink-0">人均费用</span><span className="font-medium text-gray-700">{formatMoney(finalPrice / (coreConfig.pricingCount || totalClients || 1))}/人</span></div>
