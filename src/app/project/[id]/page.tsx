@@ -1716,7 +1716,10 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                   <span className="font-medium">{formatMoney(serviceFeeAmount)}</span>
                 </div>
                 <div className="flex justify-between py-2 border-b border-gray-100 items-center">
-                  <span className="text-gray-600 font-medium">税费 ({otherExpenses.taxPercent ?? 1}%)</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-600 font-medium">税费 ({otherExpenses.taxPercent ?? 1}%)</span>
+                    <span className="text-xs text-gray-400">税基 ¥{formatMoney(qSubtotal_m)}</span>
+                  </div>
                   <div className="flex items-center gap-2">
                     <span className="font-medium">{formatMoney(tax)}</span>
                   </div>
