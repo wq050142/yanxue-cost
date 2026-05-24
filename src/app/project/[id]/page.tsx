@@ -19,6 +19,7 @@ import {
   ACCOMMODATION_TYPE_LABELS, 
   DEFAULT_MEAL_CONFIG,
   DEFAULT_STAFF_MEMBERS,
+  DEFAULT_CORE_CONFIG,
   DEFAULT_OTHER_EXPENSES,
   DEFAULT_INSURANCE_CONFIG
 } from '@/types';
@@ -51,6 +52,14 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
   const [showCostExportMenu, setShowCostExportMenu] = useState(false);
   const [showQuoteExportMenu, setShowQuoteExportMenu] = useState(false);
 
+  // 安全解构：确保在数据加载中或加载失败时，Hooks 仍能正常运行而不会崩溃
+  const { coreConfig, dailyExpenses, otherExpenses } = projectData || {
+    project: { name: '', type: 'multi-day', remark: '' },
+    coreConfig: DEFAULT_CORE_CONFIG,
+    dailyExpenses: [],
+    otherExpenses: DEFAULT_OTHER_EXPENSES
+  } as any;
+
   useEffect(() => {
     if (authLoading) return;
     
@@ -78,6 +87,43 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
 
   // 迁移旧数据格式到新格式
   const migrateOldData = (data: ProjectData) => {
+    // 确保基础结构存在
+    if (!data.coreConfig) {
+      data.coreConfig = {
+        studentCount: 0,
+        parentCount: 0,
+        teacherCount: 0,
+        staffMembers: [...DEFAULT_STAFF_MEMBERS],
+        tripDays: 1,
+        accommodationDays: 0,
+        accommodationType: '3-diamond',
+        twinRoom: { price: 0, countClient: 0, countStaff: 0 },
+        kingRoom: { price: 0, countClient: 0, countStaff: 0 },
+        staffAccommodation: false,
+        staffAccommodationNights: 0,
+        staffRoomType: 'twin',
+        staffRoomPrice: 0,
+        mealStandardClient: 0,
+        mealStandardStaff: 0,
+        busFee: 0,
+        otherTransports: []
+      };
+    }
+
+    if (!data.otherExpenses) {
+      data.otherExpenses = {
+        insurance: { ...DEFAULT_INSURANCE_CONFIG, days: data.coreConfig?.tripDays || 1 },
+        serviceFeeMode: 'percent',
+        serviceFeePercent: 10,
+        serviceFeePerPerson: 0,
+        serviceFeeDays: 1,
+        materials: [],
+        otherExpenses: [],
+        taxPercent: 1,
+        reserveFund: 0
+      };
+    }
+
     // 迁移工作人员数据
     if (!data.coreConfig.staffMembers && (data.coreConfig as any).staffCounts) {
       const oldStaff = (data.coreConfig as any).staffCounts;
@@ -108,18 +154,17 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
       };
     }
     
-    // 迁移：为缺少 serviceFeeMode 的旧数据添加默认值
-    if (!(data.otherExpenses as any).serviceFeeMode) {
-      (data.otherExpenses as any).serviceFeeMode = 'percent';
-    }
-    if (!(data.otherExpenses as any).serviceFeePerPerson) {
-      (data.otherExpenses as any).serviceFeePerPerson = 0;
-    }
-    if (!(data.otherExpenses as any).serviceFeeDays) {
-      (data.otherExpenses as any).serviceFeeDays = 1;
-    }
+    // 迁移：为缺少字段的旧数据添加默认值
+    const oe = data.otherExpenses as any;
+    if (!oe.serviceFeeMode) oe.serviceFeeMode = 'percent';
+    if (oe.serviceFeePerPerson === undefined) oe.serviceFeePerPerson = 0;
+    if (oe.serviceFeeDays === undefined) oe.serviceFeeDays = 1;
+    if (oe.taxPercent === undefined) oe.taxPercent = 1;
+    if (!oe.insurance) oe.insurance = { ...DEFAULT_INSURANCE_CONFIG, days: data.coreConfig.tripDays || 1 };
+    if (!oe.materials) oe.materials = [];
+    if (!oe.otherExpenses) oe.otherExpenses = [];
     
-    // 迁移交通数据（旧格式 flightEnabled/trainEnabled 转为 otherTransports 数组）
+    // 迁移交通数据
     if (!data.coreConfig.otherTransports) {
       const transports: TransportItem[] = [];
       if ((data.coreConfig as any).flightEnabled && (data.coreConfig as any).flightPrice) {
@@ -376,8 +421,6 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
     </div>
   );
 
-  const { coreConfig, dailyExpenses, otherExpenses } = projectData;
-
   // 数据一致性检查与同步
   useEffect(() => {
     if (!projectData) return;
@@ -503,7 +546,24 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
 
   const totalPeople = useMemo(() => totalClients + totalStaff, [totalClients, totalStaff]);
 
-  const summary = useMemo(() => calculateCostSummary(projectData), [projectData]);
+  const summary = useMemo(() => {
+    if (!projectData) {
+      return {
+        totalClients: 0,
+        totalStaff: 0,
+        totalAccommodation: 0,
+        totalMeal: 0,
+        totalBus: 0,
+        totalStaffFee: 0,
+        totalSingleItems: 0,
+        totalOtherExpenses: 0,
+        totalCost: 0,
+        avgCostPerClient: 0,
+        dailyBreakdown: []
+      } as CostSummary;
+    }
+    return calculateCostSummary(projectData);
+  }, [projectData]);
 
   // 操作函数
   const addStaffMember = () => {
