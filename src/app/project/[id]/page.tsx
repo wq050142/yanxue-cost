@@ -1505,6 +1505,205 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
             </CardHeader>
             <CardContent className="py-3 px-4">
               <div className="space-y-0 text-sm">
+                {/* 报价单细项明细 */}
+                {stats.quoteAcc_m > 0 && (
+                  <>
+                    <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600 font-medium">住宿费</span><span className="font-medium">{formatMoney(stats.quoteAcc_m)}</span></div>
+                    <div className="pl-2 text-xs text-gray-500 space-y-1 py-1 border-b border-gray-50">
+                      {dailyExpenses.slice(0, coreConfig.accommodationDays).map((day: any, idx: number) => {
+                        const dayTwinCount = day.twinRoomCount ?? coreConfig.twinRoom?.countClient ?? 0;
+                        const dayTwinPrice = day.twinRoomPrice ?? coreConfig.twinRoom?.price ?? 0;
+                        const dayKingCount = day.kingRoomCount ?? coreConfig.kingRoom?.countClient ?? 0;
+                        const dayKingPrice = day.kingRoomPrice ?? coreConfig.kingRoom?.price ?? 0;
+                        const qTwinCount = day.quoteTwinRoomCount ?? dayTwinCount;
+                        const qTwinPrice = day.quoteTwinRoomPrice ?? dayTwinPrice;
+                        const qKingCount = day.quoteKingRoomCount ?? dayKingCount;
+                        const qKingPrice = day.quoteKingRoomPrice ?? dayKingPrice;
+                        const dayAcc = day.quoteAccommodationAmount ?? (qTwinCount * qTwinPrice + qKingCount * qKingPrice);
+                        if (dayAcc <= 0) return null;
+                        return (
+                          <div key={day.day} className="py-1">
+                            <div className="flex justify-between font-medium text-gray-700"><span>D{day.day} {ACCOMMODATION_TYPE_LABELS[day.accommodationType || coreConfig.accommodationType]}</span><span>{formatMoney(dayAcc)}</span></div>
+                            <div className="text-gray-500 pl-2">
+                              {isQuoteEditing ? (
+                                <div className="flex flex-wrap gap-2 mt-1">
+                                  <div className="flex items-center gap-1"><span>双床</span><NumberInput className="h-6 w-12 text-xs border rounded" value={qTwinCount} onChange={(v) => { const newDays = [...dailyExpenses]; newDays[idx] = { ...day, quoteTwinRoomCount: v }; updateData({ dailyExpenses: newDays }); }} /><span>x</span><NumberInput className="h-6 w-16 text-xs border rounded" value={qTwinPrice} onChange={(v) => { const newDays = [...dailyExpenses]; newDays[idx] = { ...day, quoteTwinRoomPrice: v }; updateData({ dailyExpenses: newDays }); }} /></div>
+                                  <div className="flex items-center gap-1"><span>大床</span><NumberInput className="h-6 w-12 text-xs border rounded" value={qKingCount} onChange={(v) => { const newDays = [...dailyExpenses]; newDays[idx] = { ...day, quoteKingRoomCount: v }; updateData({ dailyExpenses: newDays }); }} /><span>x</span><NumberInput className="h-6 w-16 text-xs border rounded" value={qKingPrice} onChange={(v) => { const newDays = [...dailyExpenses]; newDays[idx] = { ...day, quoteKingRoomPrice: v }; updateData({ dailyExpenses: newDays }); }} /></div>
+                                </div>
+                              ) : (
+                                <>
+                                  {qTwinCount > 0 && <span>双床{qTwinCount}×{qTwinPrice} </span>}
+                                  {qKingCount > 0 && <span>大床{qKingCount}×{qKingPrice} </span>}
+                                </>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </>
+                )}
+
+                {stats.quoteMeal_m > 0 && (
+                  <>
+                    <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600 font-medium">用餐费</span><span className="font-medium">{formatMoney(stats.quoteMeal_m)}</span></div>
+                    <div className="pl-2 text-xs text-gray-500 space-y-1 py-1 border-b border-gray-50">
+                      {dailyExpenses.map((day: any, idx: number) => {
+                        const lunch = day.lunch || DEFAULT_MEAL_CONFIG;
+                        const dinner = day.dinner || DEFAULT_MEAL_CONFIG;
+                        const calculateMealAmountFn = (meal: any) => {
+                          if (!meal || meal.enabled === false) return 0;
+                          if (meal.amount && meal.amount > 0) return meal.amount;
+                          const price = meal.pricePerPerson || coreConfig.mealStandardClient || 0;
+                          return (meal.clientMealType || 'table') === 'table' ? price * 10 * (meal.tableCount || Math.ceil(totalClients / 10)) : price * (meal.clientCount || totalClients);
+                        };
+                        const qLunch = lunch.quoteAmount ?? calculateMealAmountFn(lunch);
+                        const qDinner = dinner.quoteAmount ?? calculateMealAmountFn(dinner);
+                        if (qLunch === 0 && qDinner === 0) return null;
+                        return (
+                          <div key={idx} className="space-y-1">
+                            {qLunch > 0 && (
+                              <div className="flex justify-between items-center">
+                                <span>D{day.day}中餐</span>
+                                <div className="flex items-center gap-2">
+                                  {isQuoteEditing && <NumberInput className="h-6 w-20 text-xs border rounded" value={qLunch} onChange={(v) => { const newDays = [...dailyExpenses]; newDays[idx] = { ...day, lunch: { ...lunch, quoteAmount: v } }; updateData({ dailyExpenses: newDays }); }} />}
+                                  <span>{formatMoney(qLunch)}</span>
+                                </div>
+                              </div>
+                            )}
+                            {qDinner > 0 && (
+                              <div className="flex justify-between items-center">
+                                <span>D{day.day}晚餐</span>
+                                <div className="flex items-center gap-2">
+                                  {isQuoteEditing && <NumberInput className="h-6 w-20 text-xs border rounded" value={qDinner} onChange={(v) => { const newDays = [...dailyExpenses]; newDays[idx] = { ...day, dinner: { ...dinner, quoteAmount: v } }; updateData({ dailyExpenses: newDays }); }} />}
+                                  <span>{formatMoney(qDinner)}</span>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </>
+                )}
+
+                {stats.quoteBus_m > 0 && (
+                  <>
+                    <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600 font-medium">交通费</span><span className="font-medium">{formatMoney(stats.quoteBus_m)}</span></div>
+                    <div className="pl-2 text-xs text-gray-500 space-y-1 py-1 border-b border-gray-50">
+                      <div className="flex justify-between items-center">
+                        <span>大巴包车</span>
+                        <div className="flex items-center gap-2">
+                          {isQuoteEditing && <NumberInput className="h-6 w-20 text-xs border rounded" value={coreConfig.busQuoteFee ?? coreConfig.busFee} onChange={(v) => updateData({ coreConfig: { ...coreConfig, busQuoteFee: v } })} />}
+                          <span>{formatMoney(coreConfig.busQuoteFee ?? coreConfig.busFee)}</span>
+                        </div>
+                      </div>
+                      {(coreConfig.otherTransports || []).map((t: any, idx: number) => (
+                        <div key={t.id} className="flex justify-between items-center">
+                          <span>{t.type === 'flight' ? '飞机' : '高铁'} {t.count}张</span>
+                          <div className="flex items-center gap-2">
+                            {isQuoteEditing && <NumberInput className="h-6 w-20 text-xs border rounded" value={t.quotePrice ?? t.price} onChange={(v) => { const newTrans = [...coreConfig.otherTransports]; newTrans[idx] = { ...t, quotePrice: v }; updateData({ coreConfig: { ...coreConfig, otherTransports: newTrans } }); }} />}
+                            <span>{formatMoney((t.quotePrice ?? t.price) * t.count)}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+
+                {stats.quoteStaffFee_m > 0 && (
+                  <>
+                    <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600 font-medium">工作人员</span><span className="font-medium">{formatMoney(stats.quoteStaffFee_m)}</span></div>
+                    <div className="pl-2 text-xs text-gray-500 space-y-1 py-1 border-b border-gray-50">
+                      {dailyExpenses.map((day: any, idx: number) => {
+                        let dayTotal = 0;
+                        (coreConfig.staffMembers || []).forEach((m: StaffMember) => {
+                          const count = (day.quoteStaffCounts?.[m.id] ?? m.count) || 0;
+                          const fee = (day.quoteStaffFees?.[m.id] ?? (day.staffFees && day.staffFees[m.id]) ?? m.dailyFee) || 0;
+                          dayTotal += count * fee;
+                        });
+                        if (dayTotal === 0) return null;
+                        return (
+                          <div key={day.day} className="py-1">
+                            <div className="flex justify-between font-medium"><span>D{day.day}</span><span>{formatMoney(dayTotal)}</span></div>
+                            {isQuoteEditing && (
+                              <div className="pl-2 space-y-1 mt-1">
+                                {(coreConfig.staffMembers || []).filter((m: StaffMember) => m.count > 0).map((m: StaffMember) => (
+                                  <div key={m.id} className="flex items-center gap-2">
+                                    <span className="w-12">{m.name}</span>
+                                    <NumberInput className="h-6 w-10 text-xs border rounded" value={day.quoteStaffCounts?.[m.id] ?? m.count} onChange={(v) => { const newDays = [...dailyExpenses]; newDays[idx] = { ...day, quoteStaffCounts: { ...(day.quoteStaffCounts || {}), [m.id]: v } }; updateData({ dailyExpenses: newDays }); }} />
+                                    <span>人 x</span>
+                                    <NumberInput className="h-6 w-16 text-xs border rounded" value={day.quoteStaffFees?.[m.id] ?? (day.staffFees && day.staffFees[m.id]) ?? m.dailyFee} onChange={(v) => { const newDays = [...dailyExpenses]; newDays[idx] = { ...day, quoteStaffFees: { ...(day.quoteStaffFees || {}), [m.id]: v } }; updateData({ dailyExpenses: newDays }); }} />
+                                    <span>元</span>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </>
+                )}
+
+                {stats.quoteSingle_m > 0 && (
+                  <>
+                    <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600 font-medium">活动项目</span><span className="font-medium">{formatMoney(stats.quoteSingle_m)}</span></div>
+                    <div className="pl-2 text-xs text-gray-500 space-y-1 py-1 border-b border-gray-50">
+                      {dailyExpenses.map((day: any, dIdx: number) => (day.singleItems || []).filter((i: any) => i.name).map((i: any, iIdx: number) => {
+                        const qPrice = i.quotePrice ?? i.price;
+                        const qCount = i.quoteCountClient ?? i.count;
+                        const qTotal = i.quoteTotalPrice ?? (qPrice * qCount);
+                        return (
+                          <div key={`${day.day}-${iIdx}`} className="flex justify-between items-center">
+                            <span>D{day.day} {i.name}</span>
+                            <div className="flex items-center gap-2">
+                              {isQuoteEditing && (
+                                <div className="flex items-center gap-1">
+                                  <NumberInput className="h-6 w-16 text-xs border rounded" value={qPrice} onChange={(v) => { const newDays = [...dailyExpenses]; const items = [...day.singleItems]; items[iIdx] = { ...items[iIdx], quotePrice: v, quoteTotalPrice: v * (items[iIdx].quoteCountClient || items[iIdx].count) }; newDays[dIdx] = { ...day, singleItems: items }; updateData({ dailyExpenses: newDays }); }} />
+                                  <span>x</span>
+                                  <NumberInput className="h-6 w-12 text-xs border rounded" value={qCount} onChange={(v) => { const newDays = [...dailyExpenses]; const items = [...day.singleItems]; items[iIdx] = { ...items[iIdx], quoteCountClient: v, quoteTotalPrice: (items[iIdx].quotePrice || items[iIdx].price) * v }; newDays[dIdx] = { ...day, singleItems: items }; updateData({ dailyExpenses: newDays }); }} />
+                                </div>
+                              )}
+                              <span>{formatMoney(qTotal)}</span>
+                            </div>
+                          </div>
+                        );
+                      }))}
+                    </div>
+                  </>
+                )}
+
+                {stats.quoteOther_m > 0 && (
+                  <>
+                    <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600 font-medium">其他费用</span><span className="font-medium">{formatMoney(stats.quoteOther_m)}</span></div>
+                    <div className="pl-2 text-xs text-gray-500 space-y-1 py-1 border-b border-gray-50">
+                      {stats.insuranceQ_m > 0 && (
+                        <div className="flex justify-between items-center">
+                          <span>保险费</span>
+                          <div className="flex items-center gap-2">
+                            {isQuoteEditing && <NumberInput className="h-6 w-20 text-xs border rounded" value={otherExpenses.insurance?.quoteAmount ?? otherExpenses.insurance?.totalAmount} onChange={(v) => updateData({ otherExpenses: { ...otherExpenses, insurance: { ...otherExpenses.insurance, quoteAmount: v } } })} />}
+                            <span>{formatMoney(stats.insuranceQ_m)}</span>
+                          </div>
+                        </div>
+                      )}
+                      {(otherExpenses.materials || []).map((m: any, mIdx: number) => {
+                        const qTotal = m.quoteTotalPrice ?? m.totalPrice ?? (m.price * m.quantity);
+                        if (qTotal <= 0) return null;
+                        return (
+                          <div key={m.id} className="flex justify-between items-center">
+                            <span>杂费-{m.name}</span>
+                            <div className="flex items-center gap-2">
+                              {isQuoteEditing && <NumberInput className="h-6 w-20 text-xs border rounded" value={qTotal} onChange={(v) => { const newMats = [...otherExpenses.materials]; newMats[mIdx] = { ...m, quoteTotalPrice: v }; updateData({ otherExpenses: { ...otherExpenses, materials: newMats } }); }} />}
+                              <span>{formatMoney(qTotal)}</span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </>
+                )}
+
                 <div className="flex justify-between py-2 border-b border-gray-100"><span className="text-gray-600 font-medium">小计</span><span className="font-medium">{formatMoney(qSubtotal_m)}</span></div>
                 <div className="flex justify-between py-2 border-b border-gray-100">
                   {(otherExpenses.serviceFeeMode ?? 'percent') === 'per-person' ? 
