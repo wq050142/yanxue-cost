@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
-import { LogIn, UserPlus, Mail, ArrowLeft } from 'lucide-react';
+import { LogIn, UserPlus, Mail, ArrowLeft, X } from 'lucide-react';
 
 interface AuthModalProps {
   open: boolean;
@@ -154,16 +154,27 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={(v) => { onOpenChange(v); if (!v) resetForm(); }}>
-      <DialogContent className="sm:max-w-[400px]">
+      <DialogContent className="sm:max-w-[400px]" showCloseButton={false}>
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            {mode === 'forgot' && (
-              <button onClick={() => handleModeChange('login')} className="mr-1">
-                <ArrowLeft className="w-4 h-4" />
-              </button>
-            )}
-            {getIcon()}
-            {getTitle()}
+          <DialogTitle className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              {mode === 'forgot' && (
+                <button 
+                  onClick={() => handleModeChange('login')} 
+                  className="mr-1 p-1 -ml-1 rounded hover:bg-gray-100 transition-colors"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                </button>
+              )}
+              {getIcon()}
+              {getTitle()}
+            </div>
+            <button 
+              onClick={() => onOpenChange(false)}
+              className="p-1 rounded hover:bg-gray-100 transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
           </DialogTitle>
           <DialogDescription>{getDescription()}</DialogDescription>
         </DialogHeader>
@@ -210,7 +221,7 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
           )}
           
           {error && (
-            <div className="text-sm p-2 rounded text-red-500">
+            <div className="text-sm p-3 rounded bg-red-50 text-red-600 border border-red-200">
               {error}
             </div>
           )}
