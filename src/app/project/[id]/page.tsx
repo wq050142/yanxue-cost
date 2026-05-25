@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, use, useRef, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { ArrowLeft, Save, Download, Plus, Trash2, Pencil, Check, FileSpreadsheet, Image, FileText, LogIn } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -38,6 +38,7 @@ const PROJECT_TYPES: { value: ProjectType; label: string }[] = [
 export default function ProjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
+  const pathname = usePathname();
   const { user, loading: authLoading } = useAuth();
   const [projectData, setProjectData] = useState<ProjectData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -92,23 +93,25 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
       }
     };
 
-    const handleRouteChange = () => {
+    const handlePopState = () => {
       if (hasUnsavedChanges) {
         if (!window.confirm('您有未保存的更改，确定要离开吗？')) {
-          throw new Error('Route change cancelled');
+          history.pushState(null, '', window.location.href);
+        } else {
+          setHasUnsavedChanges(false);
         }
-        setHasUnsavedChanges(false);
       }
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
-    const unsubscribe = router.events.on('beforePopState', handleRouteChange);
+    window.addEventListener('popstate', handlePopState);
+    history.pushState(null, '', window.location.href);
 
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
-      unsubscribe();
+      window.removeEventListener('popstate', handlePopState);
     };
-  }, [hasUnsavedChanges, router]);
+  }, [hasUnsavedChanges]);
 
   // 迁移旧数据格式到新格式
   const migrateOldData = (data: ProjectData): ProjectData => {
