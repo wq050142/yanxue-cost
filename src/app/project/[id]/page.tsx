@@ -42,7 +42,6 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
   const [projectData, setProjectData] = useState<ProjectData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [discount, setDiscount] = useState(0);
   const [isQuoteEditing, setIsQuoteEditing] = useState(false);
   const [quoteEditSnapshot, setQuoteEditSnapshot] = useState<any>(null);
   
@@ -120,6 +119,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
         if (!d.otherExpenses.otherExpenses) d.otherExpenses.otherExpenses = [];
         if (d.otherExpenses.taxPercent === undefined) d.otherExpenses.taxPercent = 1;
         if (!d.otherExpenses.serviceFeeMode) d.otherExpenses.serviceFeeMode = 'percent';
+        if (d.otherExpenses.discount === undefined) d.otherExpenses.discount = 0;
       }
 
       if (!d.dailyExpenses) {
@@ -231,10 +231,10 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
 
   // 导出 Excel
   const handleExportExcel = () => {
-    if (!projectData) return;
+    if (!projectData || !stats) return;
     const summary = calculateCostSummary(projectData);
     const { coreConfig, dailyExpenses, otherExpenses } = projectData;
-    exportToExcel(projectData, summary, dailyExpenses, otherExpenses, coreConfig, discount);
+    exportToExcel(projectData, summary, dailyExpenses, otherExpenses, coreConfig, stats.discountAmount || 0);
     setShowExportMenu(false);
   };
 
@@ -342,7 +342,8 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
     const tax = taxBase_m * (otherExpenses.taxPercent ?? 1) / 100;
 
     const totalPrice = qSubtotal_m + serviceFeeAmount + tax;
-    const finalPrice = totalPrice - discount;
+    const discountAmount = otherExpenses.discount || 0;
+    const finalPrice = totalPrice - discountAmount;
     const pricePerClient = totalClients > 0 ? finalPrice / totalClients : 0;
 
     return {
@@ -350,14 +351,14 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
       serviceFeeAmount, tax, totalPrice, finalPrice, pricePerClient,
       quoteAcc_m, quoteMeal_m, quoteBus_m, quoteSingle_m, quoteOther_m, 
       quoteStaffFee_m, insuranceQ_m, materialsQ_m,
-      taxBase_m // 将计算出的实际税基也返回
+      taxBase_m, discountAmount // 将计算出的实际税基也返回
     };
-  }, [projectData, discount]);
+  }, [projectData]);
 
   const handleExport = () => {
     if (!projectData || !stats) return;
     const { coreConfig, dailyExpenses, otherExpenses } = projectData;
-    const { totalClients, totalStaff, summary, qSubtotal_m, serviceFeeAmount, tax, totalPrice, finalPrice } = stats;
+    const { totalClients, totalStaff, summary, qSubtotal_m, serviceFeeAmount, tax, totalPrice, finalPrice, discountAmount } = stats;
     
     const projectTypeLabel = projectData.project.type === 'half-day' ? '半日' : projectData.project.type === 'one-day' ? '一日' : `${coreConfig.tripDays}天`;
     
@@ -481,13 +482,17 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
     lines.push('', '─'.repeat(60), 
       `成本小计：${formatMoney(summary.totalCost)}`, 
       `税费(${otherExpenses.taxPercent ?? 1}%)：${formatMoney(tax)}`,
-      `报价合计：${formatMoney(totalPrice)}`, 
-      `优惠：-${formatMoney(discount)}`, 
-      '', '═'.repeat(60), 
+      `报价合计：${formatMoney(totalPrice)}`);
+    
+    if (discountAmount > 0) {
+      lines.push(`优惠：-${formatMoney(discountAmount)}`);
+    }
+    
+    lines.push('', '═'.repeat(60), 
       `应付金额：${formatMoney(finalPrice)}`, 
       `人均费用：${formatMoney(finalPrice / (totalClients || 1))}`);
     
-    const revenue = qSubtotal_m + serviceFeeAmount + tax - discount;
+    const revenue = qSubtotal_m + serviceFeeAmount + tax - discountAmount;
     const cost = summary.totalCost;
     const profit = revenue - cost;
     const profitRate = revenue > 0 ? (profit / revenue * 100) : 0;
@@ -696,7 +701,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
   );
 
   const { coreConfig, dailyExpenses, otherExpenses } = projectData;
-  const { totalClients, totalStaff, summary, qSubtotal_m, serviceFeeAmount, tax, totalPrice, finalPrice } = stats;
+  const { totalClients, totalStaff, summary, qSubtotal_m, serviceFeeAmount, tax, totalPrice, finalPrice, discountAmount } = stats;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -1316,6 +1321,13 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
               </div>
 
               <div className="bg-gray-50 rounded-lg p-3 space-y-2">
+                <span className="text-sm font-medium text-gray-700">优惠</span>
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+                  <div className="flex items-center gap-1"><NumberInput className="h-8 w-24 text-sm px-2 border rounded" value={otherExpenses.discount || 0} onChange={(v) => updateData({ otherExpenses: { ...otherExpenses, discount: v } })} /><span className="text-gray-500">元</span></div>
+                </div>
+              </div>
+
+              <div className="bg-gray-50 rounded-lg p-3 space-y-2">
                 <div className="flex items-center justify-between"><span className="text-sm font-medium text-gray-700">杂费（客户）</span><Button variant="outline" size="sm" className="h-7 text-sm" onClick={addMaterial}><Plus className="w-4 h-4 mr-1" />添加</Button></div>
                 {otherExpenses.materials.map((material) => (
                   <div key={material.id} className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm">
@@ -1470,7 +1482,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                       <>
                         <div className="flex justify-between py-1.5 border-b border-gray-100"><span className="text-gray-600">营收 (实收)</span><span className="font-medium text-gray-800">{formatMoney(revenue)}</span></div>
                         <div className="pl-2 text-xs text-gray-500 space-y-0.5 py-1 border-b border-gray-50">
-                          <div className="flex justify-between"><span>报价合计 {formatMoney(totalPrice)} - 优惠 {formatMoney(discount)}</span><span>{formatMoney(revenue)}</span></div>
+                          <div className="flex justify-between"><span>报价合计 {formatMoney(totalPrice)}{discountAmount > 0 ? ` - 优惠 ${formatMoney(discountAmount)}` : ''}</span><span>{formatMoney(revenue)}</span></div>
                           <div className="flex justify-between"><span>{pricingPeople}人 × {formatMoney(pricePerPerson)}/人</span><span></span></div>
                         </div>
                         <div className="flex justify-between py-1.5 border-b border-gray-100"><span className="text-gray-600">成本 (内部)</span><span className="font-medium text-gray-800">{formatMoney(cost)}</span></div>
@@ -1725,6 +1737,9 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                   </div>
                 </div>
                 <div className="flex justify-between py-2.5 bg-gray-50 rounded mt-2 px-3"><span className="font-semibold text-gray-800">报价合计</span><span className="font-bold text-gray-900 text-xl">{formatMoney(totalPrice)}</span></div>
+                {discountAmount > 0 && (
+                  <div className="flex justify-between py-2 border-b border-gray-100 text-red-600"><span className="font-medium">优惠</span><span className="font-medium">-{formatMoney(discountAmount)}</span></div>
+                )}
                 <div className="flex justify-between py-2.5 bg-gray-100 rounded mt-2 px-3"><span className="font-bold text-gray-800">应付金额</span><span className="font-bold text-gray-900 text-2xl">{formatMoney(finalPrice)}</span></div>
                 <div className="flex justify-between items-center py-2 text-gray-500"><span className="flex-shrink-0">人均费用</span><span className="font-medium text-gray-700">{formatMoney(finalPrice / (coreConfig.pricingCount || totalClients || 1))}/人</span></div>
               </div>

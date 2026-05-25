@@ -201,6 +201,7 @@ export interface OtherExpenses {
   taxPercent: number; // 税费百分比，默认 1%
   taxBase?: number; // 税费基数（可编辑，默认为报价小计+服务费）
   reserveFund: number; // 备用金
+  discount?: number; // 优惠金额
   materials: MaterialItem[]; // 物料费列表
   otherExpenses: OtherExpenseItem[]; // 其他费用列表
 }
@@ -313,6 +314,7 @@ export const DEFAULT_OTHER_EXPENSES: OtherExpenses = {
   serviceFeeBase: undefined, // 默认用报价小计
   taxPercent: 1, // 默认1%
   reserveFund: 0,
+  discount: 0,
   materials: [],
   otherExpenses: [],
 };
