@@ -44,6 +44,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
   const [isSaving, setIsSaving] = useState(false);
   const [isQuoteEditing, setIsQuoteEditing] = useState(false);
   const [quoteEditSnapshot, setQuoteEditSnapshot] = useState<any>(null);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   
   // 导出相关 ref
   const costProfitCardRef = useRef<HTMLDivElement>(null);
@@ -81,6 +82,33 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
     
     loadData();
   }, [id, router, user, authLoading]);
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (hasUnsavedChanges) {
+        e.preventDefault();
+        e.returnValue = '';
+        return '';
+      }
+    };
+
+    const handleRouteChange = () => {
+      if (hasUnsavedChanges) {
+        if (!window.confirm('您有未保存的更改，确定要离开吗？')) {
+          throw new Error('Route change cancelled');
+        }
+        setHasUnsavedChanges(false);
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    const unsubscribe = router.events.on('beforePopState', handleRouteChange);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      unsubscribe();
+    };
+  }, [hasUnsavedChanges, router]);
 
   // 迁移旧数据格式到新格式
   const migrateOldData = (data: ProjectData): ProjectData => {
@@ -215,6 +243,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
       if (!prev) return prev;
       return { ...prev, ...updates };
     });
+    setHasUnsavedChanges(true);
   };
 
   const handleSave = async () => {
@@ -223,6 +252,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
     const success = await updateProjectData(projectData);
     setIsSaving(false);
     if (success) {
+      setHasUnsavedChanges(false);
       alert('保存成功！');
     } else {
       alert('保存失败，请重试');
@@ -583,7 +613,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
   const updateStaffMember = (id: string, updates: Partial<StaffMember>) => {
     setProjectData((prev: ProjectData | null) => {
       if (!prev) return prev;
-      const newMembers = prev.coreConfig.staffMembers.map((m: StaffMember) => m.id === id ? { ...m, ...updates } : m);
+      const newMembers = prev.coreConfig.staffMembers.map((m: StaffMember) => m.id !== id ? m : { ...m, ...updates });
       let newDailyExpenses = prev.dailyExpenses;
       if (updates.dailyFee !== undefined) {
         if (updates.dailyFee === 0) {
@@ -597,6 +627,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
       }
       return { ...prev, coreConfig: { ...prev.coreConfig, staffMembers: newMembers }, dailyExpenses: newDailyExpenses };
     });
+    setHasUnsavedChanges(true);
   };
 
   const removeStaffMember = (id: string) => {
@@ -760,8 +791,8 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
         </div>
       </header>
 
-      <main className="flex flex-col lg:flex-row gap-4 p-3 md:p-4">
-        <div className="flex-1 min-w-0 space-y-4">
+      <main className="flex flex-col lg:flex-row gap-4 p-3 md:p-4 max-w-[1600px] mx-auto">
+        <div className="flex-1 min-w-0 space-y-4 max-w-2xl">
           {/* 项目时长 - 仅多日项目显示 */}
           {projectData.project.type === 'multi-day' && (
             <Card>
@@ -1356,23 +1387,24 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
           </Card>
         </div>
 
-        <div className="w-full lg:w-[420px] flex-shrink-0 space-y-4 lg:sticky lg:top-14 lg:self-start lg:max-h-[calc(100vh-56px)] lg:overflow-y-auto">
-          <div ref={costProfitCardRef}>
-          <Card>
-            <CardHeader className="py-2 px-4 border-b bg-gray-50">
-              <div className="flex items-center justify-between">
-                <div><CardTitle className="text-lg font-bold text-gray-800">成本核算与利润分析</CardTitle><p className="text-sm text-gray-500 mt-0.5">内部参考</p></div>
-                <div className="relative export-button-container">
-                  <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => setShowCostExportMenu(!showCostExportMenu)}><Download className="w-3 h-3" /></Button>
-                  {showCostExportMenu && (
-                    <div className="absolute right-0 top-8 z-50 bg-white border rounded-lg shadow-lg py-1 min-w-[100px]">
-                      <button className="w-full px-3 py-1.5 text-left text-xs hover:bg-gray-100 flex items-center gap-2" onClick={() => handleExportCostCard('image')}><Image className="w-3 h-3" />图片</button>
-                      <button className="w-full px-3 py-1.5 text-left text-xs hover:bg-gray-100 flex items-center gap-2" onClick={() => handleExportCostCard('pdf')}><FileText className="w-3 h-3" />PDF</button>
-                    </div>
-                  )}
+        <div className="w-full lg:w-auto flex-shrink-0 lg:sticky lg:top-14 lg:self-start">
+          <div className="flex flex-col lg:flex-row gap-4">
+            <div ref={costProfitCardRef} className="w-full lg:w-[380px]">
+            <Card>
+              <CardHeader className="py-2 px-4 border-b bg-blue-50">
+                <div className="flex items-center justify-between">
+                  <div><CardTitle className="text-lg font-bold text-blue-800">成本核算</CardTitle><p className="text-sm text-gray-500 mt-0.5">内部参考</p></div>
+                  <div className="relative export-button-container">
+                    <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => setShowCostExportMenu(!showCostExportMenu)}><Download className="w-3 h-3" /></Button>
+                    {showCostExportMenu && (
+                      <div className="absolute right-0 top-8 z-50 bg-white border rounded-lg shadow-lg py-1 min-w-[100px]">
+                        <button className="w-full px-3 py-1.5 text-left text-xs hover:bg-gray-100 flex items-center gap-2" onClick={() => handleExportCostCard('image')}><Image className="w-3 h-3" />图片</button>
+                        <button className="w-full px-3 py-1.5 text-left text-xs hover:bg-gray-100 flex items-center gap-2" onClick={() => handleExportCostCard('pdf')}><FileText className="w-3 h-3" />PDF</button>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </CardHeader>
+              </CardHeader>
             <CardContent className="py-3 px-4">
               <div className="space-y-0 text-sm">
                 {projectData.project.type === 'multi-day' && summary.totalAccommodation > 0 && (
@@ -1473,8 +1505,8 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                   <div className="flex justify-between py-2 bg-blue-50 rounded px-2"><span className="font-semibold text-gray-800">成本合计</span><span className="font-bold text-blue-700">{formatMoney(summary.totalCost + tax)}</span></div>
                 </div>
                 
-                <div className="mt-4 pt-3 border-t-2 border-gray-200">
-                  <div className="text-sm font-semibold text-gray-700 mb-2">利润分析</div>
+                <div className="mt-4 pt-3 border-t-2 border-blue-200">
+                  <div className="text-sm font-semibold text-blue-700 mb-2">利润分析</div>
                   {(() => {
                     const revenue = finalPrice; const pricingPeople = coreConfig.pricingCount ?? totalClients; const pricePerPerson = pricingPeople > 0 ? revenue / pricingPeople : 0;
                     const cost = summary.totalCost; const profit = revenue - cost; const profitRate = revenue > 0 ? (profit / revenue * 100) : 0;
@@ -1486,7 +1518,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                           <div className="flex justify-between"><span>{pricingPeople}人 × {formatMoney(pricePerPerson)}/人</span><span></span></div>
                         </div>
                         <div className="flex justify-between py-1.5 border-b border-gray-100"><span className="text-gray-600">成本 (内部)</span><span className="font-medium text-gray-800">{formatMoney(cost)}</span></div>
-                        <div className="flex justify-between py-2 bg-gray-50 rounded mt-1 px-2"><span className="font-semibold text-gray-800">利润</span><span className={`font-bold text-lg ${profit >= 0 ? 'text-red-600' : 'text-green-600'}`}>{profit >= 0 ? '+' : ''}{formatMoney(profit)}</span></div>
+                        <div className="flex justify-between py-2 bg-blue-50 rounded mt-1 px-2"><span className="font-semibold text-blue-800">利润</span><span className={`font-bold text-lg ${profit >= 0 ? 'text-red-600' : 'text-green-600'}`}>{profit >= 0 ? '+' : ''}{formatMoney(profit)}</span></div>
                         <div className="flex justify-between py-1.5 border-b border-gray-100"><span className="text-gray-600">利润率</span><span className={`font-medium ${profitRate >= 0 ? 'text-red-600' : 'text-green-600'}`}>{profitRate.toFixed(1)}%</span></div>
                       </>
                     );
@@ -1497,11 +1529,11 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
           </Card>
           </div>
 
-          <div ref={quoteCardRef}>
+          <div ref={quoteCardRef} className="w-full lg:w-[380px]">
           <Card>
-            <CardHeader className="py-2 px-4 border-b bg-gray-50">
+            <CardHeader className="py-2 px-4 border-b bg-amber-50">
               <div className="flex items-center justify-between">
-                <div><CardTitle className="text-lg font-bold text-gray-800">{projectData.project.name} 报价单</CardTitle></div>
+                <div><CardTitle className="text-lg font-bold text-amber-800">{projectData.project.name} 报价单</CardTitle></div>
                 <div className="flex items-center gap-2 export-button-container">
                   {isQuoteEditing ? (
                     <><Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => { if (quoteEditSnapshot) { updateData({ coreConfig: quoteEditSnapshot.coreConfig, dailyExpenses: quoteEditSnapshot.dailyExpenses, otherExpenses: quoteEditSnapshot.otherExpenses }); } setQuoteEditSnapshot(null); setIsQuoteEditing(false); }}>取消</Button><Button size="sm" className="h-7 text-xs" onClick={() => { setQuoteEditSnapshot(null); setIsQuoteEditing(false); handleSave(); }}><Check className="w-3 h-3 mr-1" />保存</Button></>
@@ -1745,6 +1777,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
               </div>
             </CardContent>
           </Card>
+          </div>
           </div>
         </div>
       </main>
