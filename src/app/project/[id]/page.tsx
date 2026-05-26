@@ -89,41 +89,38 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
       if (hasUnsavedChanges) {
         e.preventDefault();
         e.returnValue = '您有未保存的更改，确定要离开吗？';
-        return '您有未保存的更改，确定要离开吗？';
+        return e.returnValue;
       }
     };
-
     window.addEventListener('beforeunload', handleBeforeUnload);
-    
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [hasUnsavedChanges]);
 
   useEffect(() => {
-    let ignoreNextPopState = false;
-    
-    const handlePopState = () => {
-      if (ignoreNextPopState) {
-        ignoreNextPopState = false;
-        return;
+    if (!hasUnsavedChanges) return;
+
+    const originalPushState = history.pushState;
+    const originalReplaceState = history.replaceState;
+
+    history.pushState = function(...args) {
+      if (window.confirm('您有未保存的更改，确定要离开吗？')) {
+        setHasUnsavedChanges(false);
+        return originalPushState.apply(this, args);
       }
-      
-      if (hasUnsavedChanges) {
-        if (window.confirm('您有未保存的更改，确定要离开吗？')) {
-          setHasUnsavedChanges(false);
-        } else {
-          ignoreNextPopState = true;
-          window.history.pushState(null, '', window.location.href);
-        }
-      }
+      return undefined;
     };
 
-    window.addEventListener('popstate', handlePopState);
-    window.history.pushState(null, '', window.location.href);
+    history.replaceState = function(...args) {
+      if (window.confirm('您有未保存的更改，确定要离开吗？')) {
+        setHasUnsavedChanges(false);
+        return originalReplaceState.apply(this, args);
+      }
+      return undefined;
+    };
 
     return () => {
-      window.removeEventListener('popstate', handlePopState);
+      history.pushState = originalPushState;
+      history.replaceState = originalReplaceState;
     };
   }, [hasUnsavedChanges]);
 
@@ -758,7 +755,13 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-3">
-                <Button variant="ghost" size="icon" className="h-8 w-8 flex-shrink-0" onClick={() => router.push('/')}>
+                <Button variant="ghost" size="icon" className="h-8 w-8 flex-shrink-0" onClick={() => {
+                  if (hasUnsavedChanges && !window.confirm('您有未保存的更改，确定要离开吗？')) {
+                    return;
+                  }
+                  setHasUnsavedChanges(false);
+                  router.push('/');
+                }}>
                   <ArrowLeft className="w-4 h-4" />
                 </Button>
                 <Input value={projectData.project.name} onChange={(e) => updateData({ project: { ...projectData.project, name: e.target.value } })}
