@@ -46,6 +46,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
   const [isQuoteEditing, setIsQuoteEditing] = useState(false);
   const [quoteEditSnapshot, setQuoteEditSnapshot] = useState<any>(null);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [currentPath, setCurrentPath] = useState('');
   
   // 导出相关 ref
   const costProfitCardRef = useRef<HTMLDivElement>(null);
@@ -88,30 +89,40 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (hasUnsavedChanges) {
         e.preventDefault();
-        e.returnValue = '';
-        return '';
-      }
-    };
-
-    const handlePopState = () => {
-      if (hasUnsavedChanges) {
-        if (!window.confirm('您有未保存的更改，确定要离开吗？')) {
-          history.pushState(null, '', window.location.href);
-        } else {
-          setHasUnsavedChanges(false);
-        }
+        e.returnValue = '您有未保存的更改，确定要离开吗？';
+        return '您有未保存的更改，确定要离开吗？';
       }
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
-    window.addEventListener('popstate', handlePopState);
-    history.pushState(null, '', window.location.href);
-
+    
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
-      window.removeEventListener('popstate', handlePopState);
     };
   }, [hasUnsavedChanges]);
+
+  useEffect(() => {
+    setCurrentPath(pathname);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!projectData || currentPath !== pathname) return;
+    
+    const handlePopState = () => {
+      if (hasUnsavedChanges && window.confirm('您有未保存的更改，确定要离开吗？')) {
+        setHasUnsavedChanges(false);
+      } else {
+        window.history.pushState(null, '', window.location.href);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    window.history.pushState(null, '', window.location.href);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [hasUnsavedChanges, pathname, projectData, currentPath]);
 
   // 迁移旧数据格式到新格式
   const migrateOldData = (data: ProjectData): ProjectData => {
