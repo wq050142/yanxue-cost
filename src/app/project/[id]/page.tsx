@@ -46,7 +46,6 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
   const [isQuoteEditing, setIsQuoteEditing] = useState(false);
   const [quoteEditSnapshot, setQuoteEditSnapshot] = useState<any>(null);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-  const [currentPath, setCurrentPath] = useState('');
   
   // 导出相关 ref
   const costProfitCardRef = useRef<HTMLDivElement>(null);
@@ -102,17 +101,21 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
   }, [hasUnsavedChanges]);
 
   useEffect(() => {
-    setCurrentPath(pathname);
-  }, [pathname]);
-
-  useEffect(() => {
-    if (!projectData || currentPath !== pathname) return;
+    let ignoreNextPopState = false;
     
     const handlePopState = () => {
-      if (hasUnsavedChanges && window.confirm('您有未保存的更改，确定要离开吗？')) {
-        setHasUnsavedChanges(false);
-      } else {
-        window.history.pushState(null, '', window.location.href);
+      if (ignoreNextPopState) {
+        ignoreNextPopState = false;
+        return;
+      }
+      
+      if (hasUnsavedChanges) {
+        if (window.confirm('您有未保存的更改，确定要离开吗？')) {
+          setHasUnsavedChanges(false);
+        } else {
+          ignoreNextPopState = true;
+          window.history.pushState(null, '', window.location.href);
+        }
       }
     };
 
@@ -122,7 +125,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
     return () => {
       window.removeEventListener('popstate', handlePopState);
     };
-  }, [hasUnsavedChanges, pathname, projectData, currentPath]);
+  }, [hasUnsavedChanges]);
 
   // 迁移旧数据格式到新格式
   const migrateOldData = (data: ProjectData): ProjectData => {
