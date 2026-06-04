@@ -39,7 +39,10 @@ export interface Project {
   type: ProjectType;
   remark: string;
   clientName?: string; // 客户名称
-  travelDate?: string; // 出行日期
+  travelDateStart?: string; // 出行开始日期
+  travelDateEnd?: string; // 出行结束日期
+  quoteDate?: string; // 报价日期
+  quoteCompany?: string; // 报价单位
   folderId?: string | null;
   createdAt: string;
   updatedAt: string;

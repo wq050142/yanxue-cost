@@ -767,7 +767,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                 <Input value={projectData.project.name} onChange={(e) => updateData({ project: { ...projectData.project, name: e.target.value } })}
                   className="text-xl font-bold text-gray-900 border-0 p-0 h-auto flex-1 min-w-0 focus-visible:ring-0" placeholder="项目名称" />
               </div>
-              <div className="flex items-center gap-4 mt-1 ml-11">
+              <div className="flex flex-wrap items-center gap-4 mt-1 ml-11">
                 <span className="text-sm text-gray-500 flex-shrink-0">
                   时长类型：<span className={`font-medium ${
                     projectData.project.type === 'half-day' ? 'text-green-600' :
@@ -788,10 +788,37 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                   <span className="text-sm text-gray-500">出行日期：</span>
                   <Input 
                     type="date"
-                    value={projectData.project.travelDate || ''} 
-                    onChange={(e) => updateData({ project: { ...projectData.project, travelDate: e.target.value } })}
+                    value={projectData.project.travelDateStart || ''} 
+                    onChange={(e) => updateData({ project: { ...projectData.project, travelDateStart: e.target.value } })}
                     className="h-7 w-40 text-sm px-2 border rounded" 
-                    placeholder="请选择日期"
+                    placeholder="开始日期"
+                  />
+                  <span className="text-sm text-gray-500">到</span>
+                  <Input 
+                    type="date"
+                    value={projectData.project.travelDateEnd || ''} 
+                    onChange={(e) => updateData({ project: { ...projectData.project, travelDateEnd: e.target.value } })}
+                    className="h-7 w-40 text-sm px-2 border rounded" 
+                    placeholder="结束日期"
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-500">报价日期：</span>
+                  <Input 
+                    type="date"
+                    value={projectData.project.quoteDate || new Date().toISOString().split('T')[0]} 
+                    onChange={(e) => updateData({ project: { ...projectData.project, quoteDate: e.target.value } })}
+                    className="h-7 w-40 text-sm px-2 border rounded" 
+                    placeholder="报价日期"
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-500">报价单位：</span>
+                  <Input 
+                    value={projectData.project.quoteCompany || ''} 
+                    onChange={(e) => updateData({ project: { ...projectData.project, quoteCompany: e.target.value } })}
+                    className="h-7 w-40 text-sm px-2 border rounded" 
+                    placeholder="请输入报价单位"
                   />
                 </div>
                 {projectData.project.remark && (
@@ -1593,7 +1620,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
             <CardContent className="py-3 px-4">
               <div className="space-y-0 text-sm">
                 {/* 客户信息展示 */}
-                {(projectData.project.clientName || projectData.project.travelDate) && (
+                {(projectData.project.clientName || projectData.project.travelDateStart || projectData.project.travelDateEnd || projectData.project.quoteDate || projectData.project.quoteCompany) && (
                   <div className="bg-amber-50 rounded-lg p-3 mb-3 space-y-1">
                     {projectData.project.clientName && (
                       <div className="flex justify-between">
@@ -1601,10 +1628,26 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                         <span className="text-gray-800">{projectData.project.clientName}</span>
                       </div>
                     )}
-                    {projectData.project.travelDate && (
+                    {(projectData.project.travelDateStart || projectData.project.travelDateEnd) && (
                       <div className="flex justify-between">
                         <span className="text-gray-600 font-medium">出行日期</span>
-                        <span className="text-gray-800">{projectData.project.travelDate}</span>
+                        <span className="text-gray-800">
+                          {projectData.project.travelDateStart && projectData.project.travelDateEnd
+                            ? `${projectData.project.travelDateStart} 到 ${projectData.project.travelDateEnd}`
+                            : (projectData.project.travelDateStart || projectData.project.travelDateEnd || '')}
+                        </span>
+                      </div>
+                    )}
+                    {projectData.project.quoteDate && (
+                      <div className="flex justify-between">
+                        <span className="text-gray-600 font-medium">报价日期</span>
+                        <span className="text-gray-800">{projectData.project.quoteDate}</span>
+                      </div>
+                    )}
+                    {projectData.project.quoteCompany && (
+                      <div className="flex justify-between">
+                        <span className="text-gray-600 font-medium">报价单位</span>
+                        <span className="text-gray-800">{projectData.project.quoteCompany}</span>
                       </div>
                     )}
                   </div>
