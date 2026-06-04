@@ -1529,7 +1529,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                   <div className="text-sm font-semibold text-blue-700 mb-2">利润分析</div>
                   {(() => {
                     const revenue = finalPrice; const pricingPeople = coreConfig.pricingCount ?? totalClients; const pricePerPerson = pricingPeople > 0 ? revenue / pricingPeople : 0;
-                    const cost = summary.totalCost; const profit = revenue - cost; const profitRate = revenue > 0 ? (profit / revenue * 100) : 0;
+                    const costWithTax = summary.totalCost + tax; const profit = revenue - costWithTax; const profitRate = revenue > 0 ? (profit / revenue * 100) : 0;
                     return (
                       <>
                         <div className="flex justify-between py-1.5 border-b border-gray-100"><span className="text-gray-600">营收 (实收)</span><span className="font-medium text-gray-800">{formatMoney(revenue)}</span></div>
@@ -1537,7 +1537,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                           <div className="flex justify-between"><span>报价合计 {formatMoney(totalPrice)}{discountAmount > 0 ? ` - 优惠 ${formatMoney(discountAmount)}` : ''}</span><span>{formatMoney(revenue)}</span></div>
                           <div className="flex justify-between"><span>{pricingPeople}人 × {formatMoney(pricePerPerson)}/人</span><span></span></div>
                         </div>
-                        <div className="flex justify-between py-1.5 border-b border-gray-100"><span className="text-gray-600">成本 (内部)</span><span className="font-medium text-gray-800">{formatMoney(cost)}</span></div>
+                        <div className="flex justify-between py-1.5 border-b border-gray-100"><span className="text-gray-600">成本 (含税)</span><span className="font-medium text-gray-800">{formatMoney(costWithTax)}</span></div>
                         <div className="flex justify-between py-2 bg-blue-50 rounded mt-1 px-2"><span className="font-semibold text-blue-800">利润</span><span className={`font-bold text-lg ${profit >= 0 ? 'text-red-600' : 'text-green-600'}`}>{profit >= 0 ? '+' : ''}{formatMoney(profit)}</span></div>
                         <div className="flex justify-between py-1.5 border-b border-gray-100"><span className="text-gray-600">利润率</span><span className={`font-medium ${profitRate >= 0 ? 'text-red-600' : 'text-green-600'}`}>{profitRate.toFixed(1)}%</span></div>
                       </>
