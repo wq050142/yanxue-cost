@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
+@import './apple-design.css';
 
 @custom-variant dark (&:is(.dark *));
 
