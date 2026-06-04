@@ -132,7 +132,21 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
       const d = JSON.parse(JSON.stringify(data));
       
       // 1. 确保基础结构存在并合并默认值
-      if (!d.project) d.project = { id, name: '未命名项目', type: 'one-day', remark: '', clientName: '', travelDate: '', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+      if (!d.project) d.project = { id, name: '未命名项目', type: 'one-day', remark: '', clientName: '', travelDateStart: '', travelDateEnd: '', quoteDate: new Date().toISOString().split('T')[0], quoteCompany: '', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+      
+      // 迁移旧的 travelDate 到新的日期区间格式
+      if ((d.project as any).travelDate && !d.project.travelDateStart && !d.project.travelDateEnd) {
+        d.project.travelDateStart = (d.project as any).travelDate;
+        d.project.travelDateEnd = (d.project as any).travelDate;
+        delete (d.project as any).travelDate;
+      }
+      
+      // 确保新字段存在默认值
+      if (d.project.clientName === undefined) d.project.clientName = '';
+      if (d.project.travelDateStart === undefined) d.project.travelDateStart = '';
+      if (d.project.travelDateEnd === undefined) d.project.travelDateEnd = '';
+      if (d.project.quoteDate === undefined) d.project.quoteDate = new Date().toISOString().split('T')[0];
+      if (d.project.quoteCompany === undefined) d.project.quoteCompany = '';
       
       if (!d.coreConfig) {
         d.coreConfig = { ...DEFAULT_CORE_CONFIG };
