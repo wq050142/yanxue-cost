@@ -132,7 +132,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
       const d = JSON.parse(JSON.stringify(data));
       
       // 1. 确保基础结构存在并合并默认值
-      if (!d.project) d.project = { id, name: '未命名项目', type: 'one-day', remark: '', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+      if (!d.project) d.project = { id, name: '未命名项目', type: 'one-day', remark: '', clientName: '', travelDate: '', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
       
       if (!d.coreConfig) {
         d.coreConfig = { ...DEFAULT_CORE_CONFIG };
@@ -775,6 +775,25 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                     'text-purple-600'
                   }`}>{PROJECT_TYPES.find(t => t.value === projectData.project.type)?.label}</span>
                 </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-500">客户名称：</span>
+                  <Input 
+                    value={projectData.project.clientName || ''} 
+                    onChange={(e) => updateData({ project: { ...projectData.project, clientName: e.target.value } })}
+                    className="h-7 w-40 text-sm px-2 border rounded" 
+                    placeholder="请输入客户名称"
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-500">出行日期：</span>
+                  <Input 
+                    type="date"
+                    value={projectData.project.travelDate || ''} 
+                    onChange={(e) => updateData({ project: { ...projectData.project, travelDate: e.target.value } })}
+                    className="h-7 w-40 text-sm px-2 border rounded" 
+                    placeholder="请选择日期"
+                  />
+                </div>
                 {projectData.project.remark && (
                   <span className="text-sm text-gray-500 truncate" title={projectData.project.remark}>
                     备注：{projectData.project.remark}
@@ -1573,6 +1592,23 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
             </CardHeader>
             <CardContent className="py-3 px-4">
               <div className="space-y-0 text-sm">
+                {/* 客户信息展示 */}
+                {(projectData.project.clientName || projectData.project.travelDate) && (
+                  <div className="bg-amber-50 rounded-lg p-3 mb-3 space-y-1">
+                    {projectData.project.clientName && (
+                      <div className="flex justify-between">
+                        <span className="text-gray-600 font-medium">客户名称</span>
+                        <span className="text-gray-800">{projectData.project.clientName}</span>
+                      </div>
+                    )}
+                    {projectData.project.travelDate && (
+                      <div className="flex justify-between">
+                        <span className="text-gray-600 font-medium">出行日期</span>
+                        <span className="text-gray-800">{projectData.project.travelDate}</span>
+                      </div>
+                    )}
+                  </div>
+                )}
                 {/* 报价单细项明细 */}
                 {stats.quoteAcc_m > 0 && (
                   <>

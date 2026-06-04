@@ -38,6 +38,8 @@ export interface Project {
   name: string;
   type: ProjectType;
   remark: string;
+  clientName?: string; // 客户名称
+  travelDate?: string; // 出行日期
   folderId?: string | null;
   createdAt: string;
   updatedAt: string;
