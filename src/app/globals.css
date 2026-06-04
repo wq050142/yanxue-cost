@@ -1,6 +1,6 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
-@import './apple-design.css';
+/* @import './apple-design.css'; 暂时注释避免构建失败 */
 
 @custom-variant dark (&:is(.dark *));
 
