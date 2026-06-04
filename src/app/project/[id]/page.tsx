@@ -763,23 +763,24 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
   const { totalClients, totalStaff, summary, qSubtotal_m, serviceFeeAmount, tax, totalPrice, finalPrice, discountAmount } = stats;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="sticky top-0 z-50 bg-white border-b shadow-sm">
-        <div className="px-4 py-3">
+    <div className="min-h-screen bg-gray-50/50">
+      {/* Header - Apple Style */}
+      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-gray-200/50 shadow-sm">
+        <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-3">
-                <Button variant="ghost" size="icon" className="h-8 w-8 flex-shrink-0" onClick={() => {
+              <div className="flex items-center gap-3 mb-3">
+                <Button variant="ghost" size="icon" className="h-10 w-10 flex-shrink-0 hover:bg-gray-100 rounded-lg transition-colors" onClick={() => {
                   if (hasUnsavedChanges && !window.confirm('您有未保存的更改，确定要离开吗？')) {
                     return;
                   }
                   setHasUnsavedChanges(false);
                   router.push('/');
                 }}>
-                  <ArrowLeft className="w-4 h-4" />
+                  <ArrowLeft className="w-5 h-5" />
                 </Button>
                 <Input value={projectData.project.name} onChange={(e) => updateData({ project: { ...projectData.project, name: e.target.value } })}
-                  className="text-xl font-bold text-gray-900 border-0 p-0 h-auto flex-1 min-w-0 focus-visible:ring-0" placeholder="项目名称" />
+                  className="text-2xl font-semibold text-gray-900 border-0 p-0 h-auto flex-1 min-w-0 focus-visible:ring-0 placeholder:text-gray-400" placeholder="项目名称" />
               </div>
               <div className="flex flex-wrap items-center gap-4 mt-2 ml-11">
                 <div className="flex items-center gap-2 px-3 py-1 bg-gray-50 rounded-lg">
@@ -843,30 +844,33 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                 )}
               </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-3">
               {/* 导出按钮 */}
               <div className="relative">
-                <Button variant="outline" size="sm" className="h-8 text-sm" onClick={() => setShowExportMenu(!showExportMenu)}>
-                  <Download className="w-4 h-4 mr-1" />导出
+                <Button variant="outline" size="sm" className="h-11 px-4 text-sm font-medium rounded-lg border-2 hover:bg-gray-50 transition-colors" onClick={() => setShowExportMenu(!showExportMenu)}>
+                  <Download className="w-5 h-5 mr-2" />导出
                 </Button>
                 {showExportMenu && (
-                  <div className="absolute right-0 top-10 z-50 bg-white border rounded-lg shadow-lg py-1 min-w-[140px]">
+                  <div className="absolute right-0 top-12 z-50 bg-white border border-gray-200 rounded-xl shadow-xl py-2 min-w-[160px]">
                     <button
-                      className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 flex items-center gap-2"
+                      className="w-full px-4 py-3 text-left text-sm hover:bg-gray-50 flex items-center gap-3 transition-colors"
                       onClick={handleExportExcel}
                     >
-                      <FileSpreadsheet className="w-4 h-4" />导出 Excel
+                      <FileSpreadsheet className="w-5 h-5 text-green-600" />导出 Excel
                     </button>
                     <button
-                      className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 flex items-center gap-2"
+                      className="w-full px-4 py-3 text-left text-sm hover:bg-gray-50 flex items-center gap-3 transition-colors"
                       onClick={() => { handleExport(); setShowExportMenu(false); }}
                     >
-                      <FileText className="w-4 h-4" />导出文本
+                      <FileText className="w-5 h-5 text-blue-600" />导出文本
                     </button>
                   </div>
                 )}
               </div>
-              <Button size="sm" className="h-8 text-sm" onClick={handleSave} disabled={isSaving}><Save className="w-4 h-4 mr-1" />{isSaving ? '保存中' : '保存'}</Button>
+              <Button size="sm" className="h-11 px-5 text-sm font-medium bg-black text-white hover:bg-gray-800 rounded-lg shadow-sm transition-colors" onClick={handleSave} disabled={isSaving}>
+                <Save className="w-5 h-5 mr-2" />
+                {isSaving ? '保存中' : '保存'}
+              </Button>
             </div>
           </div>
         </div>
@@ -876,17 +880,17 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
         <div className="flex-1 min-w-0 space-y-4 max-w-2xl">
           {/* 项目时长 - 仅多日项目显示 */}
           {projectData.project.type === 'multi-day' && (
-            <Card>
-              <CardContent className="py-2.5 px-4">
+            <Card className="bg-white rounded-2xl border border-gray-200/50 shadow-sm hover:shadow-md transition-shadow">
+              <CardContent className="py-3 px-5">
                 <div className="flex items-center gap-6 text-sm">
-                  <span className="text-gray-500 font-medium">项目时长</span>
-                  <div className="flex items-center gap-1.5">
-                    <NumberInput className="h-7 w-14 text-sm px-2 border rounded" value={coreConfig.tripDays} onChange={(v) => updateData({ coreConfig: { ...coreConfig, tripDays: v, accommodationDays: v > 0 ? Math.min(coreConfig.accommodationDays, v) : 0 } })} />
-                    <span className="text-gray-600">天</span>
+                  <span className="text-gray-600 font-medium">项目时长</span>
+                  <div className="flex items-center gap-2">
+                    <NumberInput className="h-9 w-16 text-sm px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-400" value={coreConfig.tripDays} onChange={(v) => updateData({ coreConfig: { ...coreConfig, tripDays: v, accommodationDays: v > 0 ? Math.min(coreConfig.accommodationDays, v) : 0 } })} />
+                    <span className="text-gray-700 font-medium">天</span>
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <NumberInput className="h-7 w-14 text-sm px-2 border rounded" value={coreConfig.accommodationDays} onChange={(v) => updateData({ coreConfig: { ...coreConfig, accommodationDays: v } })} />
-                    <span className="text-gray-600">晚住宿</span>
+                  <div className="flex items-center gap-2">
+                    <NumberInput className="h-9 w-16 text-sm px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-400" value={coreConfig.accommodationDays} onChange={(v) => updateData({ coreConfig: { ...coreConfig, accommodationDays: v } })} />
+                    <span className="text-gray-700 font-medium">晚住宿</span>
                   </div>
                 </div>
               </CardContent>
@@ -894,24 +898,24 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
           )}
 
           {/* 客户配置 */}
-          <Card>
-            <CardHeader className="py-2 px-4 border-b bg-gray-50"><CardTitle className="text-lg font-bold text-gray-800">客户配置 <span className="text-blue-600 font-normal text-sm">共{totalClients}人</span></CardTitle></CardHeader>
-            <CardContent className="py-3 px-4 space-y-3">
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
-                <span className="text-gray-500 w-12">人员</span>
-                <div className="flex items-center gap-1">
-                  <span className="text-gray-600">学生</span>
-                  <NumberInput className="h-8 w-16 text-sm px-2 border rounded" value={coreConfig.studentCount} onChange={(v) => updateData({ coreConfig: { ...coreConfig, studentCount: v } })} />
+          <Card className="bg-white rounded-2xl border border-gray-200/50 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+            <CardHeader className="py-3 px-5 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white"><CardTitle className="text-lg font-semibold text-gray-900">客户配置 <span className="text-blue-600 font-medium text-base ml-1">共{totalClients}人</span></CardTitle></CardHeader>
+            <CardContent className="py-4 px-5 space-y-3">
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
+                <span className="text-gray-600 w-12 font-medium">人员</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-700">学生</span>
+                  <NumberInput className="h-9 w-20 text-sm px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-400" value={coreConfig.studentCount} onChange={(v) => updateData({ coreConfig: { ...coreConfig, studentCount: v } })} />
                   <span className="text-gray-500">人</span>
                 </div>
-                <div className="flex items-center gap-1">
-                  <span className="text-gray-600">老师</span>
-                  <NumberInput className="h-8 w-16 text-sm px-2 border rounded" value={coreConfig.teacherCount} onChange={(v) => updateData({ coreConfig: { ...coreConfig, teacherCount: v } })} />
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-700">老师</span>
+                  <NumberInput className="h-9 w-20 text-sm px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-400" value={coreConfig.teacherCount} onChange={(v) => updateData({ coreConfig: { ...coreConfig, teacherCount: v } })} />
                   <span className="text-gray-500">人</span>
                 </div>
-                <div className="flex items-center gap-1">
-                  <span className="text-gray-600">家长</span>
-                  <NumberInput className="h-8 w-16 text-sm px-2 border rounded" value={coreConfig.parentCount} onChange={(v) => updateData({ coreConfig: { ...coreConfig, parentCount: v } })} />
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-700">家长</span>
+                  <NumberInput className="h-9 w-20 text-sm px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-400" value={coreConfig.parentCount} onChange={(v) => updateData({ coreConfig: { ...coreConfig, parentCount: v } })} />
                   <span className="text-gray-500">人</span>
                 </div>
               </div>
@@ -986,36 +990,39 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
           </Card>
 
           {/* 人员及大交通 */}
-          <Card>
-            <CardHeader className="py-2 px-4 border-b bg-gray-50">
-              <CardTitle className="text-lg font-bold text-gray-800">人员及大交通 <span className="text-green-600 font-normal text-sm">共{totalStaff}人</span></CardTitle>
+          <Card className="bg-white rounded-2xl border border-gray-200/50 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+            <CardHeader className="py-3 px-5 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
+              <CardTitle className="text-lg font-semibold text-gray-900">人员及大交通 <span className="text-green-600 font-medium text-base ml-1">共{totalStaff}人</span></CardTitle>
             </CardHeader>
-            <CardContent className="py-3 px-4 space-y-2">
+            <CardContent className="py-4 px-5 space-y-3">
               {coreConfig.staffMembers.map((member, index) => (
-                <div key={member.id} className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm bg-gray-50 rounded-lg p-2">
+                <div key={member.id} className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm bg-gray-50/50 rounded-xl p-3 hover:bg-gray-50 transition-colors">
                   <Input 
                     placeholder="角色名称" 
-                    className="h-8 w-24 text-sm px-2" 
+                    className="h-9 w-28 text-sm px-3" 
                     value={member.name} 
                     onChange={(e) => updateStaffMember(member.id, { name: e.target.value })} 
                   />
-                  <div className="flex items-center gap-1">
-                    <NumberInput className="h-8 w-16 text-sm px-2 border rounded" value={member.count} onChange={(v) => updateStaffMember(member.id, { count: v })} />
-                    <span className="text-gray-500">人</span>
+                  <div className="flex items-center gap-2">
+                    <NumberInput className="h-9 w-20 text-sm px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-400" value={member.count} onChange={(v) => updateStaffMember(member.id, { count: v })} />
+                    <span className="text-gray-600">人</span>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <span className="text-gray-400">日薪</span>
-                    <NumberInput className="h-8 w-20 text-sm px-2 border rounded" value={member.dailyFee} onChange={(v) => updateStaffMember(member.id, { dailyFee: v })} />
-                    <span className="text-gray-500">元</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-500">日薪</span>
+                    <NumberInput className="h-9 w-24 text-sm px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-400" value={member.dailyFee} onChange={(v) => updateStaffMember(member.id, { dailyFee: v })} />
+                    <span className="text-gray-600">元</span>
                   </div>
                   {coreConfig.staffMembers.length > 1 && (
-                    <Button variant="ghost" size="icon" className="h-7 w-7 text-gray-400 hover:text-red-500" onClick={() => removeStaffMember(member.id)}>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors" onClick={() => removeStaffMember(member.id)}>
                       <Trash2 className="w-4 h-4" />
                     </Button>
                   )}
                 </div>
               ))}
-              <Button variant="outline" size="sm" className="h-7 text-sm mt-1" onClick={addStaffMember}><Plus className="w-4 h-4 mr-1" />添加角色</Button>
+              <Button variant="outline" size="sm" className="h-9 text-sm font-medium rounded-lg border-dashed border-2 hover:bg-gray-50 transition-colors" onClick={addStaffMember}>
+                <Plus className="w-4 h-4 mr-2" />
+                添加角色
+              </Button>
               
               {projectData.project.type === 'multi-day' && (
                 <>
@@ -1611,44 +1618,70 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
           </div>
 
           <div ref={quoteCardRef} className="w-full lg:w-[380px]">
-          <Card>
-            <CardHeader className="py-2 px-4 border-b bg-amber-50">
+          <Card className="bg-white rounded-2xl border border-gray-200/50 shadow-lg overflow-hidden">
+            <CardHeader className="py-4 px-5 border-b bg-gradient-to-r from-amber-50 to-orange-50">
               <div className="flex items-center justify-between">
-                <div><CardTitle className="text-lg font-bold text-amber-800">{projectData.project.name} 报价单</CardTitle></div>
+                <div>
+                  <CardTitle className="text-xl font-bold text-amber-900">{projectData.project.name}</CardTitle>
+                  <p className="text-sm text-amber-700 font-medium mt-0.5">报价单</p>
+                </div>
                 <div className="flex items-center gap-2 export-button-container">
                   {isQuoteEditing ? (
-                    <><Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => { if (quoteEditSnapshot) { updateData({ coreConfig: quoteEditSnapshot.coreConfig, dailyExpenses: quoteEditSnapshot.dailyExpenses, otherExpenses: quoteEditSnapshot.otherExpenses }); } setQuoteEditSnapshot(null); setIsQuoteEditing(false); }}>取消</Button><Button size="sm" className="h-7 text-xs" onClick={() => { setQuoteEditSnapshot(null); setIsQuoteEditing(false); handleSave(); }}><Check className="w-3 h-3 mr-1" />保存</Button></>
+                    <>
+                      <Button variant="outline" size="sm" className="h-8 text-xs font-medium rounded-lg" onClick={() => { if (quoteEditSnapshot) { updateData({ coreConfig: quoteEditSnapshot.coreConfig, dailyExpenses: quoteEditSnapshot.dailyExpenses, otherExpenses: quoteEditSnapshot.otherExpenses }); } setQuoteEditSnapshot(null); setIsQuoteEditing(false); }}>
+                        取消
+                      </Button>
+                      <Button size="sm" className="h-8 text-xs font-medium bg-black text-white rounded-lg hover:bg-gray-800" onClick={() => { setQuoteEditSnapshot(null); setIsQuoteEditing(false); handleSave(); }}>
+                        <Check className="w-3 h-3 mr-1" />
+                        保存
+                      </Button>
+                    </>
                   ) : (
-                    <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => { setQuoteEditSnapshot({ coreConfig: JSON.parse(JSON.stringify(coreConfig)), dailyExpenses: JSON.parse(JSON.stringify(dailyExpenses)), otherExpenses: JSON.parse(JSON.stringify(otherExpenses)) }); setIsQuoteEditing(true); }}><Pencil className="w-3 h-3 mr-1" />编辑</Button>
+                    <Button variant="outline" size="sm" className="h-8 text-xs font-medium rounded-lg border-2" onClick={() => { setQuoteEditSnapshot({ coreConfig: JSON.parse(JSON.stringify(coreConfig)), dailyExpenses: JSON.parse(JSON.stringify(dailyExpenses)), otherExpenses: JSON.parse(JSON.stringify(otherExpenses)) }); setIsQuoteEditing(true); }}>
+                      <Pencil className="w-3 h-3 mr-1" />
+                      编辑
+                    </Button>
                   )}
-                  <div className="relative"><Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => setShowQuoteExportMenu(!showQuoteExportMenu)}><Download className="w-3 h-3" /></Button>
+                  <div className="relative">
+                    <Button variant="ghost" size="sm" className="h-8 text-xs" onClick={() => setShowQuoteExportMenu(!showQuoteExportMenu)}>
+                      <Download className="w-4 h-4" />
+                    </Button>
                     {showQuoteExportMenu && (
-                      <div className="absolute right-0 top-8 z-50 bg-white border rounded-lg shadow-lg py-1 min-w-[100px]">
-                        <button className="w-full px-3 py-1.5 text-left text-xs hover:bg-gray-100 flex items-center gap-2" onClick={() => handleExportQuoteCard('image')}><Image className="w-3 h-3" />图片</button>
-                        <button className="w-full px-3 py-1.5 text-left text-xs hover:bg-gray-100 flex items-center gap-2" onClick={() => handleExportQuoteCard('pdf')}><FileText className="w-3 h-3" />PDF</button>
+                      <div className="absolute right-0 top-10 z-50 bg-white border border-gray-200 rounded-xl shadow-xl py-2 min-w-[120px]">
+                        <button className="w-full px-4 py-2.5 text-left text-sm hover:bg-gray-50 flex items-center gap-3 transition-colors" onClick={() => handleExportQuoteCard('image')}>
+                          <Image className="w-4 h-4 text-blue-600" />
+                          图片
+                        </button>
+                        <button className="w-full px-4 py-2.5 text-left text-sm hover:bg-gray-50 flex items-center gap-3 transition-colors" onClick={() => handleExportQuoteCard('pdf')}>
+                          <FileText className="w-4 h-4 text-red-600" />
+                          PDF
+                        </button>
                       </div>
                     )}
                   </div>
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="py-4 px-4">
+            <CardContent className="py-5 px-5">
               <div className="space-y-0 text-sm">
                 {/* 客户信息展示 */}
                 {(projectData.project.clientName || projectData.project.travelDateStart || projectData.project.travelDateEnd || projectData.project.quoteDate || projectData.project.quoteCompany) && (
-                  <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-4 mb-4 border border-amber-100">
-                    <div className="text-xs font-medium text-amber-600 uppercase tracking-wide mb-3">项目信息</div>
-                    <div className="space-y-2">
+                  <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-5 mb-5 border border-amber-100/50 shadow-sm">
+                    <div className="text-xs font-semibold text-amber-700 uppercase tracking-wider mb-4 flex items-center gap-2">
+                      <span className="w-1 h-4 bg-amber-500 rounded-full"></span>
+                      项目信息
+                    </div>
+                    <div className="space-y-3">
                       {projectData.project.clientName && (
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-600">客户名称</span>
-                          <span className="text-gray-900 font-medium">{projectData.project.clientName}</span>
+                        <div className="flex justify-between items-center py-1.5 border-b border-amber-100/50">
+                          <span className="text-gray-600 text-sm">客户名称</span>
+                          <span className="text-gray-900 font-semibold">{projectData.project.clientName}</span>
                         </div>
                       )}
                       {(projectData.project.travelDateStart || projectData.project.travelDateEnd) && (
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-600">出行日期</span>
-                          <span className="text-gray-900 font-medium">
+                        <div className="flex justify-between items-center py-1.5 border-b border-amber-100/50">
+                          <span className="text-gray-600 text-sm">出行日期</span>
+                          <span className="text-gray-900 font-semibold">
                             {(() => {
                               const start = projectData.project.travelDateStart;
                               const end = projectData.project.travelDateEnd;
@@ -1665,15 +1698,15 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                         </div>
                       )}
                       {projectData.project.quoteDate && (
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-600">报价日期</span>
-                          <span className="text-gray-900 font-medium">{projectData.project.quoteDate}</span>
+                        <div className="flex justify-between items-center py-1.5 border-b border-amber-100/50">
+                          <span className="text-gray-600 text-sm">报价日期</span>
+                          <span className="text-gray-900 font-semibold">{projectData.project.quoteDate}</span>
                         </div>
                       )}
                       {projectData.project.quoteCompany && (
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-600">报价单位</span>
-                          <span className="text-gray-900 font-medium">{projectData.project.quoteCompany}</span>
+                        <div className="flex justify-between items-center py-1.5">
+                          <span className="text-gray-600 text-sm">报价单位</span>
+                          <span className="text-gray-900 font-semibold">{projectData.project.quoteCompany}</span>
                         </div>
                       )}
                     </div>

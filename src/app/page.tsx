@@ -416,26 +416,26 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* Header */}
-      <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-3 md:py-4">
+    <div className="min-h-screen bg-white">
+      {/* Header - Apple Style */}
+      <header className="border-b border-gray-200/50 bg-white/95 backdrop-blur-xl sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 md:gap-3">
-              <img src="/logo.png" alt="Logo" className="w-8 h-8 md:w-10 md:h-10 rounded-lg" />
+            <div className="flex items-center gap-3">
+              <img src="/logo.png" alt="Logo" className="w-10 h-10 rounded-xl shadow-sm" />
               <div>
-                <h1 className="text-base md:text-xl font-bold text-gray-900">研学旅行成本核算</h1>
-                <p className="text-xs md:text-sm text-gray-500 hidden sm:block">快速核算，精准报价</p>
+                <h1 className="text-xl font-semibold text-gray-900 tracking-tight">研学旅行成本核算</h1>
+                <p className="text-sm text-gray-500">快速核算，精准报价</p>
               </div>
             </div>
             
-            <div className="flex items-center gap-1 md:gap-2">
+            <div className="flex items-center gap-3">
               {user ? (
                 <>
-                  {/* 移动端：主要操作按钮 */}
-                  <Button className="gap-1 md:gap-2 h-9 md:h-10 px-3 md:px-4" onClick={() => setIsDialogOpen(true)}>
-                    <Plus className="w-4 h-4" />
-                    <span className="hidden sm:inline">新建项目</span>
+                  {/* 主要操作按钮 */}
+                  <Button className="gap-2 h-11 px-5 text-base font-medium bg-black text-white hover:bg-gray-800 rounded-lg shadow-sm transition-all duration-200" onClick={() => setIsDialogOpen(true)}>
+                    <Plus className="w-5 h-5" />
+                    <span>新建项目</span>
                   </Button>
                   
                   {/* 移动端：更多操作下拉菜单 */}
@@ -569,54 +569,55 @@ export default function Home() {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-6">
         {!user ? (
-          <div className="flex flex-col items-center justify-center py-8 md:py-12">
-            {/* Hero Section */}
-            <img src="/logo.png" alt="Logo" className="w-20 h-20 md:w-28 md:h-28 rounded-2xl mb-6 md:mb-8 shadow-lg shadow-blue-500/20" />
+          <div className="flex flex-col items-center justify-center py-16 md:py-24">
+            {/* Hero Section - Apple Style */}
+            <img src="/logo.png" alt="Logo" className="w-24 h-24 md:w-32 md:h-32 rounded-2xl mb-8 md:mb-10 shadow-xl" />
             
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2 md:mb-3 text-center px-4">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 md:mb-6 text-center tracking-tight">
               研学旅行成本核算工具
             </h2>
-            <p className="text-sm md:text-base text-gray-500 mb-6 md:mb-8 text-center max-w-md px-4">
-              专业的研学旅行成本核算与报价管理平台，助您高效管理项目、精准核算成本
+            <p className="text-lg md:text-xl text-gray-500 mb-10 md:mb-12 text-center max-w-2xl px-4 leading-relaxed">
+              专业的研学旅行成本核算与报价管理平台<br />
+              助您高效管理项目、精准核算成本
             </p>
             
             <Button 
               onClick={() => setIsAuthModalOpen(true)} 
-              className="gap-2 px-6 md:px-8 py-5 md:py-6 text-base md:text-lg bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 shadow-lg shadow-blue-500/30"
+              className="gap-3 px-8 py-6 text-lg font-medium bg-black text-white hover:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
             >
-              <LogIn className="w-5 h-5" />
+              <LogIn className="w-6 h-6" />
               登录 / 注册
             </Button>
 
-            {/* Feature Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mt-10 md:mt-16 w-full max-w-4xl">
-              <div className="bg-white rounded-xl p-5 md:p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-                <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-blue-100 flex items-center justify-center mb-3 md:mb-4">
-                  <Calculator className="w-5 h-5 md:w-6 md:h-6 text-blue-600" />
+            {/* Feature Cards - Apple Style */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-20 md:mt-24 w-full max-w-5xl px-4">
+              <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center mb-6">
+                  <Calculator className="w-7 h-7 text-blue-600" />
                 </div>
-                <h3 className="font-semibold text-gray-800 mb-1 md:mb-2 text-sm md:text-base">成本核算</h3>
-                <p className="text-xs md:text-sm text-gray-500">支持半日、一日、多日研学项目，自动计算各项费用</p>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">成本核算</h3>
+                <p className="text-base text-gray-500 leading-relaxed">支持半日、一日、多日研学项目，自动计算各项费用</p>
               </div>
               
-              <div className="bg-white rounded-xl p-5 md:p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-                <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-purple-100 flex items-center justify-center mb-3 md:mb-4">
-                  <FileText className="w-5 h-5 md:w-6 md:h-6 text-purple-600" />
+              <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-50 to-purple-100 flex items-center justify-center mb-6">
+                  <FileText className="w-7 h-7 text-purple-600" />
                 </div>
-                <h3 className="font-semibold text-gray-800 mb-1 md:mb-2 text-sm md:text-base">报价管理</h3>
-                <p className="text-xs md:text-sm text-gray-500">灵活设置报价策略，实时查看利润分析</p>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">报价管理</h3>
+                <p className="text-base text-gray-500 leading-relaxed">灵活设置报价策略，实时查看利润分析</p>
               </div>
               
-              <div className="bg-white rounded-xl p-5 md:p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-                <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-green-100 flex items-center justify-center mb-3 md:mb-4">
-                  <TrendingUp className="w-5 h-5 md:w-6 md:h-6 text-green-600" />
+              <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center mb-6">
+                  <TrendingUp className="w-7 h-7 text-green-600" />
                 </div>
-                <h3 className="font-semibold text-gray-800 mb-1 md:mb-2 text-sm md:text-base">数据分析</h3>
-                <p className="text-xs md:text-sm text-gray-500">清晰的数据展示，支持导出报价单截图</p>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">数据分析</h3>
+                <p className="text-base text-gray-500 leading-relaxed">清晰的数据展示，支持导出报价单截图</p>
               </div>
             </div>
 
             {/* Contact Developer */}
-            <p className="mt-8 md:mt-12 text-xs md:text-sm text-gray-400">
+            <p className="mt-16 md:mt-20 text-sm md:text-base text-gray-400">
               联系开发者：17682312594（同微信）
             </p>
           </div>
@@ -649,37 +650,36 @@ export default function Home() {
             </div>
 
             {projects.length === 0 && childFolders.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12 md:py-16">
-                <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center mb-4 md:mb-6">
-                  <Calendar className="w-10 h-10 md:w-12 md:h-12 text-blue-500" />
+              <div className="flex flex-col items-center justify-center py-20 md:py-32">
+                <div className="w-32 h-32 md:w-40 md:h-40 rounded-3xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center mb-8 md:mb-10 shadow-inner">
+                  <Calendar className="w-16 h-16 md:w-20 md:h-20 text-gray-400" />
                 </div>
-                <h2 className="text-lg md:text-xl font-semibold text-gray-700 mb-1 md:mb-2">
+                <h2 className="text-2xl md:text-3xl font-semibold text-gray-800 mb-3 md:mb-4 tracking-tight">
                   {currentFolderId ? '这个文件夹是空的' : '还没有项目'}
                 </h2>
-                <p className="text-sm md:text-base text-gray-500 mb-4 md:mb-6">点击上方"新建项目"开始创建</p>
-                <div className="flex gap-2 md:gap-3">
-                  <Button onClick={() => setIsDialogOpen(true)} className="gap-2 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700">
-                    <Plus className="w-4 h-4" />
+                <p className="text-lg text-gray-500 mb-8 md:mb-10">点击上方"新建项目"开始创建</p>
+                <div className="flex gap-4 md:gap-5">
+                  <Button onClick={() => setIsDialogOpen(true)} className="gap-3 px-6 py-4 text-base font-medium bg-black text-white hover:bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition-all duration-300">
+                    <Plus className="w-5 h-5" />
                     创建项目
                   </Button>
-                  <Button variant="outline" onClick={() => setIsFolderDialogOpen(true)} className="gap-2">
-                    <FolderPlus className="w-4 h-4" />
-                    <span className="hidden sm:inline">新建文件夹</span>
-                    <span className="sm:hidden">文件夹</span>
+                  <Button variant="outline" onClick={() => setIsFolderDialogOpen(true)} className="gap-3 px-6 py-4 text-base rounded-xl border-2 hover:bg-gray-50 transition-all duration-300">
+                    <FolderPlus className="w-5 h-5" />
+                    新建文件夹
                   </Button>
                 </div>
               </div>
             ) : viewMode === 'card' ? (
-              /* 卡片视图 */
-              <div className="space-y-4">
+              /* 卡片视图 - Apple Style */
+              <div className="space-y-6">
                 {/* 文件夹 */}
                 {childFolders.length > 0 && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                     {childFolders.map((folder) => (
                       <Card 
                         key={folder.id} 
-                        className={`cursor-pointer hover:shadow-md transition-all duration-200 hover:border-blue-300 relative ${
-                          isSelectMode && selectedFolderIds.has(folder.id) ? 'ring-2 ring-blue-500 border-blue-300' : ''
+                        className={`cursor-pointer hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 bg-white rounded-2xl border border-gray-200/50 relative overflow-hidden ${
+                          isSelectMode && selectedFolderIds.has(folder.id) ? 'ring-2 ring-blue-500 ring-offset-2 border-blue-300' : ''
                         }`}
                         onClick={() => {
                           if (isSelectMode) {
@@ -689,20 +689,22 @@ export default function Home() {
                           }
                         }}
                       >
-                        <div className="p-4">
+                        <div className="p-5">
                           <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2 min-w-0">
-                              <FolderIcon className="w-5 h-5 text-blue-500 flex-shrink-0" />
-                              <span className="font-medium truncate" title={folder.name}>{folder.name}</span>
+                            <div className="flex items-center gap-3 min-w-0">
+                              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center flex-shrink-0">
+                                <FolderIcon className="w-5 h-5 text-blue-600" />
+                              </div>
+                              <span className="text-base font-medium text-gray-900 truncate" title={folder.name}>{folder.name}</span>
                             </div>
                             {!isSelectMode && (
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                                  <Button variant="ghost" size="icon" className="h-8 w-8 flex-shrink-0 -mr-2">
-                                    <MoreVertical className="w-4 h-4" />
+                                  <Button variant="ghost" size="icon" className="h-9 w-9 flex-shrink-0 hover:bg-gray-100 rounded-lg transition-colors">
+                                    <MoreVertical className="w-5 h-5" />
                                   </Button>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
+                                <DropdownMenuContent align="end" className="rounded-xl">
                                   <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleRenameFolder(folder.id); }}>
                                     <Pencil className="w-4 h-4 mr-2" />重命名
                                   </DropdownMenuItem>
@@ -716,7 +718,7 @@ export default function Home() {
                           </div>
                           {isSelectMode && (
                             <div className="absolute top-3 left-3">
-                              <Checkbox checked={selectedFolderIds.has(folder.id)} />
+                              <Checkbox checked={selectedFolderIds.has(folder.id)} className="rounded" />
                             </div>
                           )}
                         </div>
@@ -727,12 +729,12 @@ export default function Home() {
 
                 {/* 项目 */}
                 {projects.length > 0 && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                     {projects.map((project) => (
                       <Card 
                         key={project.id} 
-                        className={`cursor-pointer hover:shadow-md transition-all duration-200 hover:border-blue-300 ${
-                          isSelectMode && selectedProjectIds.has(project.id) ? 'ring-2 ring-blue-500 border-blue-300' : ''
+                        className={`cursor-pointer hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 bg-white rounded-2xl border border-gray-200/50 overflow-hidden ${
+                          isSelectMode && selectedProjectIds.has(project.id) ? 'ring-2 ring-blue-500 ring-offset-2 border-blue-300' : ''
                         }`}
                         onClick={() => {
                           if (isSelectMode) {
@@ -742,33 +744,40 @@ export default function Home() {
                           }
                         }}
                       >
-                        <div className="p-4">
-                          <div className="flex items-start justify-between gap-2">
+                        <div className="p-5">
+                          <div className="flex items-start justify-between gap-3">
                             <div className="flex-1 min-w-0">
                               {/* 项目名称 */}
-                              <div className="font-medium text-base truncate" title={project.name}>{project.name}</div>
-                              {/* 项目类型 */}
-                              <div className="mt-1">
-                                <span className="px-1.5 py-0.5 text-xs font-medium rounded bg-blue-100 text-blue-700">
+                              <div className="text-lg font-semibold text-gray-900 truncate mb-3" title={project.name}>{project.name}</div>
+                              
+                              {/* 项目类型 - Apple Badge Style */}
+                              <div className="mb-3">
+                                <span className={`inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium ${
+                                  project.type === 'half-day' ? 'bg-green-50 text-green-700 border border-green-200' :
+                                  project.type === 'one-day' ? 'bg-blue-50 text-blue-700 border border-blue-200' :
+                                  'bg-purple-50 text-purple-700 border border-purple-200'
+                                }`}>
                                   {PROJECT_TYPE_LABELS[project.type]}
                                 </span>
                               </div>
+                              
                               {/* 备注 */}
                               {project.remark && (
-                                <p className="mt-2 text-xs text-gray-500 line-clamp-2">{project.remark}</p>
+                                <p className="text-sm text-gray-500 line-clamp-2 mb-4 leading-relaxed">{project.remark}</p>
                               )}
+                              
                               {/* 时间信息 */}
-                              <div className="mt-3 pt-2 border-t border-gray-100 flex items-center justify-between text-xs text-gray-400">
-                                <span>创建 {new Date(project.createdAt).toLocaleDateString()}</span>
-                                <span>更新 {new Date(project.updatedAt).toLocaleDateString()}</span>
+                              <div className="pt-3 border-t border-gray-100 flex items-center justify-between text-xs text-gray-400">
+                                <span>{new Date(project.createdAt).toLocaleDateString()}</span>
+                                <span>{new Date(project.updatedAt).toLocaleDateString()}</span>
                               </div>
                             </div>
                             {/* 操作按钮 */}
                             {!isSelectMode && (
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                                  <Button variant="ghost" size="icon" className="h-8 w-8 flex-shrink-0 -mt-1 -mr-2">
-                                    <MoreVertical className="w-4 h-4" />
+                                  <Button variant="ghost" size="icon" className="h-9 w-9 flex-shrink-0 hover:bg-gray-100 rounded-lg transition-colors">
+                                    <MoreVertical className="w-5 h-5" />
                                   </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">

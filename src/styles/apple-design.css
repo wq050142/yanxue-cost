@@ -1,0 +1,288 @@
+/* Apple-Inspired Design System for 研学旅行成本核算 */
+
+@layer base {
+  :root {
+    /* ========================================
+     * Apple-Inspired Color Palette
+     * ======================================== */
+    
+    /* Primary Colors - Blue */
+    --color-primary: 0, 0, 0; /* Black - Apple uses black as primary */
+    --color-primary-foreground: 255, 255, 255;
+    
+    /* Secondary Colors - Grays */
+    --color-secondary: 245, 245, 247; /* Apple Gray */
+    --color-secondary-foreground: 0, 0, 0;
+    
+    /* Accent Colors */
+    --color-accent: 0, 125, 250; /* Apple Blue */
+    --color-accent-foreground: 255, 255, 255;
+    
+    /* Muted Colors */
+    --color-muted: 245, 245, 247;
+    --color-muted-foreground: 142, 142, 147;
+    
+    /* Background */
+    --color-background: 255, 255, 255;
+    --color-foreground: 0, 0, 0;
+    
+    /* Card */
+    --color-card: 255, 255, 255;
+    --color-card-foreground: 0, 0, 0;
+    
+    /* Border */
+    --color-border: 229, 229, 234;
+    --color-input: 229, 229, 234;
+    --color-ring: 0, 125, 250;
+    
+    /* Semantic Colors */
+    --color-success: 52, 199, 89; /* Apple Green */
+    --color-warning: 255, 149, 0; /* Apple Orange */
+    --color-error: 255, 59, 48; /* Apple Red */
+    --color-info: 0, 122, 255; /* Apple Blue */
+    
+    /* Project Type Colors */
+    --color-half-day: 52, 199, 89; /* Green */
+    --color-one-day: 0, 122, 255; /* Blue */
+    --color-multi-day: 147, 129, 255; /* Purple */
+    
+    /* Quote Card Colors */
+    --color-quote-bg: 255, 249, 243; /* Warm cream */
+    --color-quote-border: 255, 214, 186; /* Peach border */
+    
+    /* Typography Scale - Apple Style */
+    --font-size-xs: 0.75rem; /* 12px */
+    --font-size-sm: 0.875rem; /* 14px */
+    --font-size-base: 1rem; /* 16px */
+    --font-size-lg: 1.125rem; /* 18px */
+    --font-size-xl: 1.25rem; /* 20px */
+    --font-size-2xl: 1.5rem; /* 24px */
+    --font-size-3xl: 1.875rem; /* 30px */
+    --font-size-4xl: 2.25rem; /* 36px */
+    
+    /* Font Weights - Apple uses medium to bold */
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    
+    /* Spacing - Consistent with Tailwind */
+    --spacing-1: 0.25rem;
+    --spacing-2: 0.5rem;
+    --spacing-3: 0.75rem;
+    --spacing-4: 1rem;
+    --spacing-5: 1.25rem;
+    --spacing-6: 1.5rem;
+    --spacing-8: 2rem;
+    --spacing-10: 2.5rem;
+    --spacing-12: 3rem;
+    --spacing-16: 4rem;
+    
+    /* Border Radius - Apple uses larger radii */
+    --radius-sm: 0.5rem; /* 8px */
+    --radius-md: 0.75rem; /* 12px */
+    --radius-lg: 1rem; /* 16px */
+    --radius-xl: 1.5rem; /* 24px */
+    --radius-full: 9999px;
+    
+    /* Shadows - Apple style */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.08), 0 4px 6px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.04);
+    
+    /* Transitions */
+    --transition-fast: 150ms cubic-bezier(0.25, 0.1, 0.25, 1);
+    --transition-base: 200ms cubic-bezier(0.25, 0.1, 0.25, 1);
+    --transition-slow: 300ms cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+  
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  
+  body {
+    @apply bg-white text-black;
+    font-feature-settings: 'kern' 1, 'liga' 1;
+  }
+}
+
+/* Apple-Style Button */
+@layer components {
+  .btn-apple {
+    @apply inline-flex items-center justify-center rounded-lg font-medium transition-all duration-200;
+    @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  .btn-apple-primary {
+    @apply bg-black text-white hover:bg-gray-800 active:bg-gray-900;
+    @apply focus:ring-black;
+  }
+  
+  .btn-apple-secondary {
+    @apply bg-gray-100 text-gray-800 hover:bg-gray-200 active:bg-gray-300;
+    @apply focus:ring-gray-500;
+  }
+  
+  .btn-apple-outline {
+    @apply border border-gray-300 bg-white text-gray-800;
+    @apply hover:bg-gray-50 active:bg-gray-100;
+    @apply focus:ring-gray-500;
+  }
+  
+  .btn-apple-ghost {
+    @apply bg-transparent text-gray-600 hover:bg-gray-100 active:bg-gray-200;
+    @apply focus:ring-gray-500;
+  }
+  
+  /* Apple-Style Card */
+  .card-apple {
+    @apply bg-white rounded-2xl border border-gray-200/50;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
+    @apply transition-all duration-200;
+  }
+  
+  .card-apple:hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.06);
+  }
+  
+  /* Apple-Style Input */
+  .input-apple {
+    @apply w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5;
+    @apply text-base text-gray-800 placeholder:text-gray-400;
+    @apply transition-all duration-200;
+    @apply focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400;
+  }
+  
+  /* Apple-Style Typography */
+  .text-hero {
+    @apply text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight;
+  }
+  
+  .text-title {
+    @apply text-2xl md:text-3xl font-bold tracking-tight;
+  }
+  
+  .text-heading {
+    @apply text-xl md:text-2xl font-semibold;
+  }
+  
+  .text-subheading {
+    @apply text-lg font-semibold;
+  }
+  
+  .text-body {
+    @apply text-base;
+  }
+  
+  .text-caption {
+    @apply text-sm text-gray-500;
+  }
+  
+  .text-small {
+    @apply text-xs text-gray-400;
+  }
+  
+  /* Project Type Colors */
+  .project-half-day {
+    @apply text-green-600;
+  }
+  
+  .project-one-day {
+    @apply text-blue-600;
+  }
+  
+  .project-multi-day {
+    @apply text-purple-600;
+  }
+  
+  /* Gradient Backgrounds */
+  .gradient-hero {
+    background: linear-gradient(180deg, #f5f5f7 0%, #ffffff 100%);
+  }
+  
+  .gradient-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(245, 245, 247, 0.9) 100%);
+  }
+  
+  /* Glass Effect */
+  .glass {
+    @apply bg-white/80 backdrop-blur-xl;
+  }
+  
+  /* Badge Styles */
+  .badge-apple {
+    @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-medium;
+  }
+  
+  .badge-apple-blue {
+    @apply bg-blue-100 text-blue-700;
+  }
+  
+  .badge-apple-purple {
+    @apply bg-purple-100 text-purple-700;
+  }
+  
+  .badge-apple-green {
+    @apply bg-green-100 text-green-700;
+  }
+}
+
+/* Animations */
+@layer utilities {
+  .animate-apple-fade-in {
+    animation: apple-fade-in 0.3s ease-out;
+  }
+  
+  .animate-apple-slide-up {
+    animation: apple-slide-up 0.4s ease-out;
+  }
+  
+  .animate-apple-scale-in {
+    animation: apple-scale-in 0.2s ease-out;
+  }
+  
+  @keyframes apple-fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes apple-slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes apple-scale-in {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+  /* Focus Ring */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:ring-offset-2;
+  }
+  
+  /* Selection */
+  .selection-apple {
+    @apply selection:bg-blue-500/20;
+  }
+}
