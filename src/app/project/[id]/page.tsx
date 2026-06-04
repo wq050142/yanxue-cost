@@ -781,62 +781,63 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                 <Input value={projectData.project.name} onChange={(e) => updateData({ project: { ...projectData.project, name: e.target.value } })}
                   className="text-xl font-bold text-gray-900 border-0 p-0 h-auto flex-1 min-w-0 focus-visible:ring-0" placeholder="项目名称" />
               </div>
-              <div className="flex flex-wrap items-center gap-4 mt-1 ml-11">
-                <span className="text-sm text-gray-500 flex-shrink-0">
-                  时长类型：<span className={`font-medium ${
+              <div className="flex flex-wrap items-center gap-4 mt-2 ml-11">
+                <div className="flex items-center gap-2 px-3 py-1 bg-gray-50 rounded-lg">
+                  <span className="text-sm text-gray-500">时长类型</span>
+                  <span className={`text-sm font-semibold ${
                     projectData.project.type === 'half-day' ? 'text-green-600' :
                     projectData.project.type === 'one-day' ? 'text-blue-600' :
                     'text-purple-600'
                   }`}>{PROJECT_TYPES.find(t => t.value === projectData.project.type)?.label}</span>
-                </span>
+                </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-500">客户名称：</span>
+                  <span className="text-sm text-gray-600">客户</span>
                   <Input 
                     value={projectData.project.clientName || ''} 
                     onChange={(e) => updateData({ project: { ...projectData.project, clientName: e.target.value } })}
-                    className="h-7 w-40 text-sm px-2 border rounded" 
-                    placeholder="请输入客户名称"
+                    className="h-8 w-44 text-sm px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-400" 
+                    placeholder="客户名称"
                   />
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-500">出行日期：</span>
+                  <span className="text-sm text-gray-600">出行</span>
                   <Input 
                     type="date"
                     value={projectData.project.travelDateStart || ''} 
                     onChange={(e) => updateData({ project: { ...projectData.project, travelDateStart: e.target.value } })}
-                    className="h-7 w-40 text-sm px-2 border rounded" 
-                    placeholder="开始日期"
+                    className="h-8 w-36 text-sm px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-400" 
+                    placeholder="开始"
                   />
-                  <span className="text-sm text-gray-500">到</span>
+                  <span className="text-xs text-gray-400">至</span>
                   <Input 
                     type="date"
                     value={projectData.project.travelDateEnd || ''} 
                     onChange={(e) => updateData({ project: { ...projectData.project, travelDateEnd: e.target.value } })}
-                    className="h-7 w-40 text-sm px-2 border rounded" 
-                    placeholder="结束日期"
+                    className="h-8 w-36 text-sm px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-400" 
+                    placeholder="结束"
                   />
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-500">报价日期：</span>
+                  <span className="text-sm text-gray-600">报价</span>
                   <Input 
                     type="date"
                     value={projectData.project.quoteDate || new Date().toISOString().split('T')[0]} 
                     onChange={(e) => updateData({ project: { ...projectData.project, quoteDate: e.target.value } })}
-                    className="h-7 w-40 text-sm px-2 border rounded" 
+                    className="h-8 w-36 text-sm px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-400" 
                     placeholder="报价日期"
                   />
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-500">报价单位：</span>
+                  <span className="text-sm text-gray-600">单位</span>
                   <Input 
                     value={projectData.project.quoteCompany || ''} 
                     onChange={(e) => updateData({ project: { ...projectData.project, quoteCompany: e.target.value } })}
-                    className="h-7 w-40 text-sm px-2 border rounded" 
-                    placeholder="请输入报价单位"
+                    className="h-8 w-44 text-sm px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-400" 
+                    placeholder="报价单位"
                   />
                 </div>
                 {projectData.project.remark && (
-                  <span className="text-sm text-gray-500 truncate" title={projectData.project.remark}>
+                  <span className="text-sm text-gray-500 truncate max-w-xs px-3 py-1 bg-gray-50 rounded-lg" title={projectData.project.remark}>
                     备注：{projectData.project.remark}
                   </span>
                 )}
@@ -1631,39 +1632,51 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="py-3 px-4">
+            <CardContent className="py-4 px-4">
               <div className="space-y-0 text-sm">
                 {/* 客户信息展示 */}
                 {(projectData.project.clientName || projectData.project.travelDateStart || projectData.project.travelDateEnd || projectData.project.quoteDate || projectData.project.quoteCompany) && (
-                  <div className="bg-amber-50 rounded-lg p-3 mb-3 space-y-1">
-                    {projectData.project.clientName && (
-                      <div className="flex justify-between">
-                        <span className="text-gray-600 font-medium">客户名称</span>
-                        <span className="text-gray-800">{projectData.project.clientName}</span>
-                      </div>
-                    )}
-                    {(projectData.project.travelDateStart || projectData.project.travelDateEnd) && (
-                      <div className="flex justify-between">
-                        <span className="text-gray-600 font-medium">出行日期</span>
-                        <span className="text-gray-800">
-                          {projectData.project.travelDateStart && projectData.project.travelDateEnd
-                            ? `${projectData.project.travelDateStart} 到 ${projectData.project.travelDateEnd}`
-                            : (projectData.project.travelDateStart || projectData.project.travelDateEnd || '')}
-                        </span>
-                      </div>
-                    )}
-                    {projectData.project.quoteDate && (
-                      <div className="flex justify-between">
-                        <span className="text-gray-600 font-medium">报价日期</span>
-                        <span className="text-gray-800">{projectData.project.quoteDate}</span>
-                      </div>
-                    )}
-                    {projectData.project.quoteCompany && (
-                      <div className="flex justify-between">
-                        <span className="text-gray-600 font-medium">报价单位</span>
-                        <span className="text-gray-800">{projectData.project.quoteCompany}</span>
-                      </div>
-                    )}
+                  <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-4 mb-4 border border-amber-100">
+                    <div className="text-xs font-medium text-amber-600 uppercase tracking-wide mb-3">项目信息</div>
+                    <div className="space-y-2">
+                      {projectData.project.clientName && (
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600">客户名称</span>
+                          <span className="text-gray-900 font-medium">{projectData.project.clientName}</span>
+                        </div>
+                      )}
+                      {(projectData.project.travelDateStart || projectData.project.travelDateEnd) && (
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600">出行日期</span>
+                          <span className="text-gray-900 font-medium">
+                            {(() => {
+                              const start = projectData.project.travelDateStart;
+                              const end = projectData.project.travelDateEnd;
+                              if (start && end) {
+                                return `${start} 至 ${end}`;
+                              } else if (start) {
+                                return start;
+                              } else if (end) {
+                                return end;
+                              }
+                              return '';
+                            })()}
+                          </span>
+                        </div>
+                      )}
+                      {projectData.project.quoteDate && (
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600">报价日期</span>
+                          <span className="text-gray-900 font-medium">{projectData.project.quoteDate}</span>
+                        </div>
+                      )}
+                      {projectData.project.quoteCompany && (
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-600">报价单位</span>
+                          <span className="text-gray-900 font-medium">{projectData.project.quoteCompany}</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
                 {/* 报价单细项明细 */}
