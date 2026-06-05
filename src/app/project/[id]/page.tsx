@@ -763,14 +763,14 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
   const { totalClients, totalStaff, summary, qSubtotal_m, serviceFeeAmount, tax, totalPrice, finalPrice, discountAmount } = stats;
 
   return (
-    <div className="min-h-screen bg-gray-50/50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100">
       {/* Header - Apple Style */}
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-gray-200/50 shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-start justify-between gap-4">
+      <header className="sticky top-0 z-50 bg-white/85 backdrop-blur-xl border-b border-slate-200/50 shadow-sm">
+        <div className="max-w-7xl mx-auto px-6 py-5">
+          <div className="flex items-start justify-between gap-6">
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-3 mb-3">
-                <Button variant="ghost" size="icon" className="h-10 w-10 flex-shrink-0 hover:bg-gray-100 rounded-lg transition-colors" onClick={() => {
+              <div className="flex items-center gap-4 mb-4">
+                <Button variant="ghost" size="icon" className="h-11 w-11 flex-shrink-0 hover:bg-slate-100 rounded-xl transition-all duration-200" onClick={() => {
                   if (hasUnsavedChanges && !window.confirm('您有未保存的更改，确定要离开吗？')) {
                     return;
                   }
@@ -780,65 +780,65 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                   <ArrowLeft className="w-5 h-5" />
                 </Button>
                 <Input value={projectData.project.name} onChange={(e) => updateData({ project: { ...projectData.project, name: e.target.value } })}
-                  className="text-2xl font-semibold text-gray-900 border-0 p-0 h-auto flex-1 min-w-0 focus-visible:ring-0 placeholder:text-gray-400" placeholder="项目名称" />
+                  className="text-2xl font-semibold text-slate-900 border-0 p-0 h-auto flex-1 min-w-0 focus-visible:ring-0 placeholder:text-slate-400" placeholder="项目名称" />
               </div>
-              <div className="flex flex-wrap items-center gap-4 mt-2 ml-11">
-                <div className="flex items-center gap-2 px-3 py-1 bg-gray-50 rounded-lg">
-                  <span className="text-sm text-gray-500">时长类型</span>
+              <div className="flex flex-wrap items-center gap-4 mt-3 ml-14">
+                <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-slate-50 to-slate-100 rounded-xl border border-slate-200/50 shadow-sm">
+                  <span className="text-sm text-slate-500 font-medium">时长类型</span>
                   <span className={`text-sm font-semibold ${
-                    projectData.project.type === 'half-day' ? 'text-green-600' :
+                    projectData.project.type === 'half-day' ? 'text-emerald-600' :
                     projectData.project.type === 'one-day' ? 'text-blue-600' :
-                    'text-purple-600'
+                    'text-violet-600'
                   }`}>{PROJECT_TYPES.find(t => t.value === projectData.project.type)?.label}</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-600">客户</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-sm text-slate-600 font-medium">客户</span>
                   <Input 
                     value={projectData.project.clientName || ''} 
                     onChange={(e) => updateData({ project: { ...projectData.project, clientName: e.target.value } })}
-                    className="h-8 w-44 text-sm px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-400" 
+                    className="h-9 w-48 text-sm px-4 border border-slate-200 rounded-xl bg-white/60 backdrop-blur-sm focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200" 
                     placeholder="客户名称"
                   />
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-600">出行</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-sm text-slate-600 font-medium">出行</span>
                   <Input 
                     type="date"
                     value={projectData.project.travelDateStart || ''} 
                     onChange={(e) => updateData({ project: { ...projectData.project, travelDateStart: e.target.value } })}
-                    className="h-8 w-36 text-sm px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-400" 
+                    className="h-9 w-36 text-sm px-4 border border-slate-200 rounded-xl bg-white/60 backdrop-blur-sm focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200" 
                     placeholder="开始"
                   />
-                  <span className="text-xs text-gray-400">至</span>
+                  <span className="text-xs text-slate-400">至</span>
                   <Input 
                     type="date"
                     value={projectData.project.travelDateEnd || ''} 
                     onChange={(e) => updateData({ project: { ...projectData.project, travelDateEnd: e.target.value } })}
-                    className="h-8 w-36 text-sm px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-400" 
+                    className="h-9 w-36 text-sm px-4 border border-slate-200 rounded-xl bg-white/60 backdrop-blur-sm focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200" 
                     placeholder="结束"
                   />
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-600">报价</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-sm text-slate-600 font-medium">报价</span>
                   <Input 
                     type="date"
                     value={projectData.project.quoteDate || new Date().toISOString().split('T')[0]} 
                     onChange={(e) => updateData({ project: { ...projectData.project, quoteDate: e.target.value } })}
-                    className="h-8 w-36 text-sm px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-400" 
+                    className="h-9 w-36 text-sm px-4 border border-slate-200 rounded-xl bg-white/60 backdrop-blur-sm focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200" 
                     placeholder="报价日期"
                   />
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-600">单位</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-sm text-slate-600 font-medium">单位</span>
                   <Input 
                     value={projectData.project.quoteCompany || ''} 
                     onChange={(e) => updateData({ project: { ...projectData.project, quoteCompany: e.target.value } })}
-                    className="h-8 w-44 text-sm px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-400" 
+                    className="h-9 w-48 text-sm px-4 border border-slate-200 rounded-xl bg-white/60 backdrop-blur-sm focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200" 
                     placeholder="报价单位"
                   />
                 </div>
                 {projectData.project.remark && (
-                  <span className="text-sm text-gray-500 truncate max-w-xs px-3 py-1 bg-gray-50 rounded-lg" title={projectData.project.remark}>
+                  <span className="text-sm text-slate-500 truncate max-w-xs px-4 py-2 bg-slate-50 rounded-xl border border-slate-200/50" title={projectData.project.remark}>
                     备注：{projectData.project.remark}
                   </span>
                 )}
@@ -847,19 +847,19 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
             <div className="flex gap-3">
               {/* 导出按钮 */}
               <div className="relative">
-                <Button variant="outline" size="sm" className="h-11 px-4 text-sm font-medium rounded-lg border-2 hover:bg-gray-50 transition-colors" onClick={() => setShowExportMenu(!showExportMenu)}>
+                <Button variant="outline" size="sm" className="h-11 px-5 text-sm font-medium rounded-xl border-2 border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm" onClick={() => setShowExportMenu(!showExportMenu)}>
                   <Download className="w-5 h-5 mr-2" />导出
                 </Button>
                 {showExportMenu && (
-                  <div className="absolute right-0 top-12 z-50 bg-white border border-gray-200 rounded-xl shadow-xl py-2 min-w-[160px]">
+                  <div className="absolute right-0 top-12 z-50 bg-white/95 backdrop-blur-xl border border-slate-200 rounded-2xl shadow-xl py-3 min-w-[170px]">
                     <button
-                      className="w-full px-4 py-3 text-left text-sm hover:bg-gray-50 flex items-center gap-3 transition-colors"
+                      className="w-full px-5 py-3 text-left text-sm font-medium hover:bg-slate-50 flex items-center gap-3 transition-all duration-200"
                       onClick={handleExportExcel}
                     >
-                      <FileSpreadsheet className="w-5 h-5 text-green-600" />导出 Excel
+                      <FileSpreadsheet className="w-5 h-5 text-emerald-600" />导出 Excel
                     </button>
                     <button
-                      className="w-full px-4 py-3 text-left text-sm hover:bg-gray-50 flex items-center gap-3 transition-colors"
+                      className="w-full px-5 py-3 text-left text-sm font-medium hover:bg-slate-50 flex items-center gap-3 transition-all duration-200"
                       onClick={() => { handleExport(); setShowExportMenu(false); }}
                     >
                       <FileText className="w-5 h-5 text-blue-600" />导出文本
@@ -867,7 +867,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                   </div>
                 )}
               </div>
-              <Button size="sm" className="h-11 px-5 text-sm font-medium bg-black text-white hover:bg-gray-800 rounded-lg shadow-sm transition-colors" onClick={handleSave} disabled={isSaving}>
+              <Button size="sm" className="h-11 px-6 text-sm font-medium bg-gradient-to-r from-slate-800 to-slate-900 text-white hover:from-slate-700 hover:to-slate-800 rounded-xl shadow-md hover:shadow-lg transition-all duration-200" onClick={handleSave} disabled={isSaving}>
                 <Save className="w-5 h-5 mr-2" />
                 {isSaving ? '保存中' : '保存'}
               </Button>
@@ -876,21 +876,21 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
         </div>
       </header>
 
-      <main className="flex flex-col lg:flex-row gap-4 p-3 md:p-4 max-w-[1600px] mx-auto">
-        <div className="flex-1 min-w-0 space-y-4 max-w-2xl">
+      <main className="flex flex-col lg:flex-row gap-6 p-4 md:p-6 max-w-[1700px] mx-auto">
+        <div className="flex-1 min-w-0 space-y-5 max-w-2xl">
           {/* 项目时长 - 仅多日项目显示 */}
           {projectData.project.type === 'multi-day' && (
-            <Card className="bg-white rounded-2xl border border-gray-200/50 shadow-sm hover:shadow-md transition-shadow">
-              <CardContent className="py-3 px-5">
-                <div className="flex items-center gap-6 text-sm">
-                  <span className="text-gray-600 font-medium">项目时长</span>
-                  <div className="flex items-center gap-2">
-                    <NumberInput className="h-9 w-16 text-sm px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-400" value={coreConfig.tripDays} onChange={(v) => updateData({ coreConfig: { ...coreConfig, tripDays: v, accommodationDays: v > 0 ? Math.min(coreConfig.accommodationDays, v) : 0 } })} />
-                    <span className="text-gray-700 font-medium">天</span>
+            <Card className="bg-white/70 backdrop-blur-xl rounded-2xl border border-slate-200/50 shadow-sm hover:shadow-lg transition-all duration-300">
+              <CardContent className="py-4 px-6">
+                <div className="flex items-center gap-8 text-sm">
+                  <span className="text-slate-600 font-semibold">项目时长</span>
+                  <div className="flex items-center gap-3">
+                    <NumberInput className="h-10 w-16 text-sm px-4 border border-slate-200 rounded-xl bg-white/50 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200" value={coreConfig.tripDays} onChange={(v) => updateData({ coreConfig: { ...coreConfig, tripDays: v, accommodationDays: v > 0 ? Math.min(coreConfig.accommodationDays, v) : 0 } })} />
+                    <span className="text-slate-700 font-semibold">天</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <NumberInput className="h-9 w-16 text-sm px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-400" value={coreConfig.accommodationDays} onChange={(v) => updateData({ coreConfig: { ...coreConfig, accommodationDays: v } })} />
-                    <span className="text-gray-700 font-medium">晚住宿</span>
+                  <div className="flex items-center gap-3">
+                    <NumberInput className="h-10 w-16 text-sm px-4 border border-slate-200 rounded-xl bg-white/50 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200" value={coreConfig.accommodationDays} onChange={(v) => updateData({ coreConfig: { ...coreConfig, accommodationDays: v } })} />
+                    <span className="text-slate-700 font-semibold">晚住宿</span>
                   </div>
                 </div>
               </CardContent>
@@ -898,25 +898,25 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
           )}
 
           {/* 客户配置 */}
-          <Card className="bg-white rounded-2xl border border-gray-200/50 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-            <CardHeader className="py-3 px-5 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white"><CardTitle className="text-lg font-semibold text-gray-900">客户配置 <span className="text-blue-600 font-medium text-base ml-1">共{totalClients}人</span></CardTitle></CardHeader>
-            <CardContent className="py-4 px-5 space-y-3">
-              <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
-                <span className="text-gray-600 w-12 font-medium">人员</span>
-                <div className="flex items-center gap-2">
-                  <span className="text-gray-700">学生</span>
-                  <NumberInput className="h-9 w-20 text-sm px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-400" value={coreConfig.studentCount} onChange={(v) => updateData({ coreConfig: { ...coreConfig, studentCount: v } })} />
-                  <span className="text-gray-500">人</span>
+          <Card className="bg-white/70 backdrop-blur-xl rounded-2xl border border-slate-200/50 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden">
+            <CardHeader className="py-4 px-6 border-b border-slate-100 bg-gradient-to-r from-slate-50/80 to-white/50"><CardTitle className="text-lg font-semibold text-slate-900">客户配置 <span className="text-blue-600 font-semibold text-base ml-1">共{totalClients}人</span></CardTitle></CardHeader>
+            <CardContent className="py-5 px-6 space-y-4">
+              <div className="flex flex-wrap items-center gap-x-8 gap-y-3 text-sm">
+                <span className="text-slate-600 w-12 font-semibold">人员</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-slate-700 font-medium">学生</span>
+                  <NumberInput className="h-10 w-20 text-sm px-4 border border-slate-200 rounded-xl bg-white/50 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200" value={coreConfig.studentCount} onChange={(v) => updateData({ coreConfig: { ...coreConfig, studentCount: v } })} />
+                  <span className="text-slate-500">人</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-gray-700">老师</span>
-                  <NumberInput className="h-9 w-20 text-sm px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-400" value={coreConfig.teacherCount} onChange={(v) => updateData({ coreConfig: { ...coreConfig, teacherCount: v } })} />
-                  <span className="text-gray-500">人</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-slate-700 font-medium">老师</span>
+                  <NumberInput className="h-10 w-20 text-sm px-4 border border-slate-200 rounded-xl bg-white/50 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200" value={coreConfig.teacherCount} onChange={(v) => updateData({ coreConfig: { ...coreConfig, teacherCount: v } })} />
+                  <span className="text-slate-500">人</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-gray-700">家长</span>
-                  <NumberInput className="h-9 w-20 text-sm px-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-400" value={coreConfig.parentCount} onChange={(v) => updateData({ coreConfig: { ...coreConfig, parentCount: v } })} />
-                  <span className="text-gray-500">人</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-slate-700 font-medium">家长</span>
+                  <NumberInput className="h-10 w-20 text-sm px-4 border border-slate-200 rounded-xl bg-white/50 focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all duration-200" value={coreConfig.parentCount} onChange={(v) => updateData({ coreConfig: { ...coreConfig, parentCount: v } })} />
+                  <span className="text-slate-500">人</span>
                 </div>
               </div>
 
@@ -1114,9 +1114,13 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
           </Card>
 
           {/* 每日费用 */}
-          <Card>
-            <CardHeader className="py-2 px-4 border-b bg-gray-50"><CardTitle className="text-lg font-bold text-gray-800">{projectData.project.type === 'half-day' ? '费用明细' : '每日费用'}</CardTitle></CardHeader>
-            <CardContent className="py-3 px-4 space-y-4">
+          <Card className="bg-white/70 backdrop-blur-xl rounded-2xl border border-slate-200/50 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden">
+            <CardHeader className="py-4 px-6 border-b border-slate-100 bg-gradient-to-r from-slate-50/80 to-white/50">
+              <CardTitle className="text-lg font-semibold text-slate-900">
+                {projectData.project.type === 'half-day' ? '费用明细' : '每日费用'}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="py-5 px-6 space-y-5">
               {coreConfig.tripDays === 0 && projectData.project.type === 'multi-day' ? (
                 <div className="text-center text-gray-400 text-sm py-4">请先设置行程天数</div>
               ) : (
@@ -1383,9 +1387,11 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="py-2 px-4 border-b bg-gray-50"><CardTitle className="text-lg font-bold text-gray-800">其他费用</CardTitle></CardHeader>
-            <CardContent className="py-3 px-4 space-y-4">
+          <Card className="bg-white/70 backdrop-blur-xl rounded-2xl border border-slate-200/50 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden">
+            <CardHeader className="py-4 px-6 border-b border-slate-100 bg-gradient-to-r from-slate-50/80 to-white/50">
+              <CardTitle className="text-lg font-semibold text-slate-900">其他费用</CardTitle>
+            </CardHeader>
+            <CardContent className="py-5 px-6 space-y-5">
               <div className="bg-gray-50 rounded-lg p-3 space-y-2">
                 <span className="text-sm font-medium text-gray-700">保险费</span>
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
@@ -1478,22 +1484,31 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
         <div className="w-full lg:w-auto flex-shrink-0 lg:sticky lg:top-14 lg:self-start">
           <div className="flex flex-col lg:flex-row gap-4">
             <div ref={costProfitCardRef} className="w-full lg:w-[380px]">
-            <Card>
-              <CardHeader className="py-2 px-4 border-b bg-blue-50">
+            <Card className="bg-white/70 backdrop-blur-xl rounded-2xl border border-slate-200/50 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden">
+              <CardHeader className="py-4 px-6 border-b border-slate-100 bg-gradient-to-r from-blue-50/80 to-white/50">
                 <div className="flex items-center justify-between">
-                  <div><CardTitle className="text-lg font-bold text-blue-800">成本核算</CardTitle><p className="text-sm text-gray-500 mt-0.5">内部参考</p></div>
+                  <div>
+                    <CardTitle className="text-lg font-semibold text-blue-900">成本核算</CardTitle>
+                    <p className="text-sm text-slate-500 mt-1">内部参考</p>
+                  </div>
                   <div className="relative export-button-container">
-                    <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => setShowCostExportMenu(!showCostExportMenu)}><Download className="w-3 h-3" /></Button>
+                    <Button variant="ghost" size="sm" className="h-9 w-9 rounded-xl text-slate-600 hover:text-slate-700 hover:bg-slate-100 transition-all duration-200" onClick={() => setShowCostExportMenu(!showCostExportMenu)}>
+                      <Download className="w-5 h-5" />
+                    </Button>
                     {showCostExportMenu && (
-                      <div className="absolute right-0 top-8 z-50 bg-white border rounded-lg shadow-lg py-1 min-w-[100px]">
-                        <button className="w-full px-3 py-1.5 text-left text-xs hover:bg-gray-100 flex items-center gap-2" onClick={() => handleExportCostCard('image')}><Image className="w-3 h-3" />图片</button>
-                        <button className="w-full px-3 py-1.5 text-left text-xs hover:bg-gray-100 flex items-center gap-2" onClick={() => handleExportCostCard('pdf')}><FileText className="w-3 h-3" />PDF</button>
+                      <div className="absolute right-0 top-11 z-50 bg-white/95 backdrop-blur-xl border border-slate-200 rounded-xl shadow-xl py-2 min-w-[120px]">
+                        <button className="w-full px-4 py-3 text-left text-sm font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-3 transition-all duration-200" onClick={() => handleExportCostCard('image')}>
+                          <Image className="w-4 h-4 text-blue-600" />图片
+                        </button>
+                        <button className="w-full px-4 py-3 text-left text-sm font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-3 transition-all duration-200" onClick={() => handleExportCostCard('pdf')}>
+                          <FileText className="w-4 h-4 text-purple-600" />PDF
+                        </button>
                       </div>
                     )}
                   </div>
                 </div>
               </CardHeader>
-            <CardContent className="py-3 px-4">
+            <CardContent className="py-5 px-6">
               <div className="space-y-0 text-sm">
                 {projectData.project.type === 'multi-day' && summary.totalAccommodation > 0 && (
                   <>
@@ -1618,42 +1633,42 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
           </div>
 
           <div ref={quoteCardRef} className="w-full lg:w-[380px]">
-          <Card className="bg-white rounded-2xl border border-gray-200/50 shadow-lg overflow-hidden">
-            <CardHeader className="py-4 px-5 border-b bg-gradient-to-r from-amber-50 to-orange-50">
+          <Card className="bg-white/70 backdrop-blur-xl rounded-2xl border border-slate-200/50 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
+            <CardHeader className="py-5 px-6 border-b border-slate-100 bg-gradient-to-r from-amber-50/80 to-orange-50/80">
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle className="text-xl font-bold text-amber-900">{projectData.project.name}</CardTitle>
-                  <p className="text-sm text-amber-700 font-medium mt-0.5">报价单</p>
+                  <CardTitle className="text-xl font-semibold text-amber-900">{projectData.project.name}</CardTitle>
+                  <p className="text-sm text-amber-700 font-semibold mt-1">报价单</p>
                 </div>
                 <div className="flex items-center gap-2 export-button-container">
                   {isQuoteEditing ? (
                     <>
-                      <Button variant="outline" size="sm" className="h-8 text-xs font-medium rounded-lg" onClick={() => { if (quoteEditSnapshot) { updateData({ coreConfig: quoteEditSnapshot.coreConfig, dailyExpenses: quoteEditSnapshot.dailyExpenses, otherExpenses: quoteEditSnapshot.otherExpenses }); } setQuoteEditSnapshot(null); setIsQuoteEditing(false); }}>
+                      <Button variant="outline" size="sm" className="h-9 text-sm font-medium rounded-xl border-slate-300 hover:bg-slate-50 transition-all duration-200" onClick={() => { if (quoteEditSnapshot) { updateData({ coreConfig: quoteEditSnapshot.coreConfig, dailyExpenses: quoteEditSnapshot.dailyExpenses, otherExpenses: quoteEditSnapshot.otherExpenses }); } setQuoteEditSnapshot(null); setIsQuoteEditing(false); }}>
                         取消
                       </Button>
-                      <Button size="sm" className="h-8 text-xs font-medium bg-black text-white rounded-lg hover:bg-gray-800" onClick={() => { setQuoteEditSnapshot(null); setIsQuoteEditing(false); handleSave(); }}>
-                        <Check className="w-3 h-3 mr-1" />
+                      <Button size="sm" className="h-9 text-sm font-medium bg-gradient-to-r from-slate-800 to-slate-900 text-white rounded-xl hover:from-slate-700 hover:to-slate-800 transition-all duration-200" onClick={() => { setQuoteEditSnapshot(null); setIsQuoteEditing(false); handleSave(); }}>
+                        <Check className="w-4 h-4 mr-1" />
                         保存
                       </Button>
                     </>
                   ) : (
-                    <Button variant="outline" size="sm" className="h-8 text-xs font-medium rounded-lg border-2" onClick={() => { setQuoteEditSnapshot({ coreConfig: JSON.parse(JSON.stringify(coreConfig)), dailyExpenses: JSON.parse(JSON.stringify(dailyExpenses)), otherExpenses: JSON.parse(JSON.stringify(otherExpenses)) }); setIsQuoteEditing(true); }}>
-                      <Pencil className="w-3 h-3 mr-1" />
+                    <Button variant="outline" size="sm" className="h-9 text-sm font-medium rounded-xl border-2 border-slate-300 hover:bg-slate-50 transition-all duration-200" onClick={() => { setQuoteEditSnapshot({ coreConfig: JSON.parse(JSON.stringify(coreConfig)), dailyExpenses: JSON.parse(JSON.stringify(dailyExpenses)), otherExpenses: JSON.parse(JSON.stringify(otherExpenses)) }); setIsQuoteEditing(true); }}>
+                      <Pencil className="w-4 h-4 mr-1" />
                       编辑
                     </Button>
                   )}
                   <div className="relative">
-                    <Button variant="ghost" size="sm" className="h-8 text-xs" onClick={() => setShowQuoteExportMenu(!showQuoteExportMenu)}>
-                      <Download className="w-4 h-4" />
+                    <Button variant="ghost" size="sm" className="h-9 w-9 rounded-xl text-slate-600 hover:text-slate-700 hover:bg-slate-100 transition-all duration-200" onClick={() => setShowQuoteExportMenu(!showQuoteExportMenu)}>
+                      <Download className="w-5 h-5" />
                     </Button>
                     {showQuoteExportMenu && (
-                      <div className="absolute right-0 top-10 z-50 bg-white border border-gray-200 rounded-xl shadow-xl py-2 min-w-[120px]">
-                        <button className="w-full px-4 py-2.5 text-left text-sm hover:bg-gray-50 flex items-center gap-3 transition-colors" onClick={() => handleExportQuoteCard('image')}>
-                          <Image className="w-4 h-4 text-blue-600" />
+                      <div className="absolute right-0 top-11 z-50 bg-white/95 backdrop-blur-xl border border-slate-200 rounded-xl shadow-xl py-3 min-w-[130px]">
+                        <button className="w-full px-5 py-3 text-left text-sm font-semibold text-slate-700 hover:bg-slate-50 flex items-center gap-3 transition-all duration-200" onClick={() => handleExportQuoteCard('image')}>
+                          <Image className="w-5 h-5 text-blue-600" />
                           图片
                         </button>
-                        <button className="w-full px-4 py-2.5 text-left text-sm hover:bg-gray-50 flex items-center gap-3 transition-colors" onClick={() => handleExportQuoteCard('pdf')}>
-                          <FileText className="w-4 h-4 text-red-600" />
+                        <button className="w-full px-5 py-3 text-left text-sm font-semibold text-slate-700 hover:bg-slate-50 flex items-center gap-3 transition-all duration-200" onClick={() => handleExportQuoteCard('pdf')}>
+                          <FileText className="w-5 h-5 text-purple-600" />
                           PDF
                         </button>
                       </div>
@@ -1662,7 +1677,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="py-5 px-5">
+            <CardContent className="py-6 px-6">
               <div className="space-y-0 text-sm">
                 {/* 客户信息展示 */}
                 {(projectData.project.clientName || projectData.project.travelDateStart || projectData.project.travelDateEnd || projectData.project.quoteDate || projectData.project.quoteCompany) && (
