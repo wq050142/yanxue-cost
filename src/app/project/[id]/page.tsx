@@ -24,8 +24,9 @@ import {
   DEFAULT_INSURANCE_CONFIG,
   CostSummary
 } from '@/types';
-import { getProjectData, updateProjectData } from '@/lib/api';
+import { getProjectData, updateProjectData, createProject } from '@/lib/api';
 import { useAuth } from '@/contexts/AuthContext';
+import { AuthModal } from '@/components/AuthModal';
 import { calculateCostSummary, calculateServiceFee, calculateServiceFeePerPerson, formatMoney } from '@/lib/calculation';
 import { exportToExcel, exportElementAsImage, exportElementAsPDF } from '@/lib/export';
 
@@ -54,25 +55,43 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
   const [showCostExportMenu, setShowCostExportMenu] = useState(false);
   const [showQuoteExportMenu, setShowQuoteExportMenu] = useState(false);
 
+  // 检查是否是临时项目
+  const isTempProject = id.startsWith('temp_');
+  
   useEffect(() => {
     if (authLoading) return;
-    
-    if (!user) {
-      router.push('/');
-      return;
-    }
     
     const loadData = async () => {
       try {
         setIsLoading(true);
-        const data = await getProjectData(id);
-        if (data) {
-          // 迁移旧数据格式
-          const safeData = migrateOldData(data);
-          setProjectData(safeData);
+        
+        // 如果是临时项目，从 localStorage 读取
+        if (isTempProject) {
+          const tempData = localStorage.getItem(`temp_project_${id}`);
+          if (tempData) {
+            const parsedData = JSON.parse(tempData);
+            // 迁移旧数据格式
+            const safeData = migrateOldData(parsedData);
+            setProjectData(safeData);
+          } else {
+            alert('临时项目不存在或已过期');
+            router.push('/');
+          }
         } else {
-          alert('项目不存在或无权限访问');
-          router.push('/');
+          // 非临时项目需要登录
+          if (!user) {
+            router.push('/');
+            return;
+          }
+          const data = await getProjectData(id);
+          if (data) {
+            // 迁移旧数据格式
+            const safeData = migrateOldData(data);
+            setProjectData(safeData);
+          } else {
+            alert('项目不存在或无权限访问');
+            router.push('/');
+          }
         }
       } catch (error) {
         console.error('加载项目失败:', error);
@@ -82,7 +101,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
     };
     
     loadData();
-  }, [id, router, user, authLoading]);
+  }, [id, router, user, authLoading, isTempProject]);
 
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
@@ -274,16 +293,93 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
     setHasUnsavedChanges(true);
   };
 
+  // 自动保存到 localStorage
+  useEffect(() => {
+    if (!projectData || !hasUnsavedChanges) return;
+    
+    // 如果是临时项目，自动保存到 localStorage
+    if (isTempProject) {
+      localStorage.setItem(`temp_project_${id}`, JSON.stringify(projectData));
+    }
+  }, [projectData, hasUnsavedChanges, id, isTempProject]);
+  
+  // 登录对话框状态
+  const [showLoginForSave, setShowLoginForSave] = useState(false);
+  
+  // 监听登录状态变化，如果登录后是因为保存而打开的，则继续保存
+  useEffect(() => {
+    if (user && showLoginForSave) {
+      setShowLoginForSave(false);
+      // 登录后自动保存
+      handleSave();
+    }
+  }, [user, showLoginForSave]);
+  
   const handleSave = async () => {
     if (!projectData) return;
-    setIsSaving(true);
-    const success = await updateProjectData(projectData);
-    setIsSaving(false);
-    if (success) {
-      setHasUnsavedChanges(false);
-      alert('保存成功！');
+    
+    // 如果是临时项目
+    if (isTempProject) {
+      // 如果未登录，要求先登录
+      if (!user) {
+        if (confirm('需要登录后才能保存项目到云端，是否现在登录？')) {
+          setShowLoginForSave(true);
+        }
+        return;
+      }
+      
+      // 已登录，先创建项目
+      try {
+        setIsSaving(true);
+        // 先创建项目
+        const createResult = await createProject(
+          projectData.project.name, 
+          projectData.project.type, 
+          projectData.project.remark
+        );
+        
+        if (createResult?.project?.id) {
+          const newId = createResult.project.id;
+          // 更新项目 ID
+          const dataToSave = {
+            ...projectData,
+            project: {
+              ...projectData.project,
+              id: newId,
+            }
+          };
+          
+          // 保存数据
+          const success = await updateProjectData(dataToSave);
+          setIsSaving(false);
+          
+          if (success) {
+            // 移除临时项目
+            localStorage.removeItem(`temp_project_${id}`);
+            setHasUnsavedChanges(false);
+            alert('保存成功！');
+            // 跳转到正式项目
+            router.replace(`/project/${newId}`);
+          } else {
+            alert('保存失败，请重试');
+          }
+        }
+      } catch (error) {
+        setIsSaving(false);
+        console.error('保存失败:', error);
+        alert('保存失败，请重试');
+      }
     } else {
-      alert('保存失败，请重试');
+      // 已有项目，直接保存
+      setIsSaving(true);
+      const success = await updateProjectData(projectData);
+      setIsSaving(false);
+      if (success) {
+        setHasUnsavedChanges(false);
+        alert('保存成功！');
+      } else {
+        alert('保存失败，请重试');
+      }
     }
   };
 
@@ -1955,6 +2051,9 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
           </div>
         </div>
       </main>
+      
+      {/* 登录对话框 - 用于保存时登录 */}
+      <AuthModal open={showLoginForSave} onOpenChange={setShowLoginForSave} />
     </div>
   );
 }

@@ -135,7 +135,12 @@ export default function Home() {
     return folders.filter(f => f.parentId === currentFolderId);
   };
 
-  // 创建项目
+  // 生成临时项目ID
+  const generateTempId = () => {
+    return 'temp_' + Date.now() + '_' + Math.random().toString(36).substring(2, 15);
+  };
+  
+  // 创建项目 - 支持未登录用户直接创建
   const handleCreateProject = async () => {
     if (!newProject.name.trim()) {
       alert('请输入项目名称');
@@ -145,14 +150,105 @@ export default function Home() {
       alert('请选择项目类型');
       return;
     }
-    const result = await createProject(newProject.name, newProject.type, newProject.remark);
-    if (result) {
-      setIsDialogOpen(false);
-      setNewProject({ name: '', type: '', remark: '' });
-      router.push(`/project/${result.project.id}`);
-    } else {
-      alert('创建项目失败，请重试');
-    }
+    
+    // 关闭对话框
+    setIsDialogOpen(false);
+    setNewProject({ name: '', type: '', remark: '' });
+    
+    // 跳转到临时项目
+    const tempId = generateTempId();
+    const tempProjectData: any = {
+      project: {
+        id: tempId,
+        name: newProject.name,
+        type: newProject.type,
+        remark: newProject.remark || '',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+      coreConfig: {
+        studentCount: 0,
+        parentCount: 0,
+        teacherCount: 0,
+        staffMembers: [
+          { id: 'guide', name: '导游', count: 0, dailyFee: 0 },
+          { id: 'photographer', name: '摄影', count: 0, dailyFee: 0 },
+          { id: 'videographer', name: '摄像', count: 0, dailyFee: 0 },
+          { id: 'driver', name: '司机', count: 0, dailyFee: 0 },
+        ],
+        tripDays: 1,
+        accommodationDays: 0,
+        accommodationType: '3-diamond',
+        twinRoom: {
+          price: 0,
+          countClient: 0,
+          countStaff: 0,
+        },
+        kingRoom: {
+          price: 0,
+          countClient: 0,
+          countStaff: 0,
+        },
+        staffAccommodation: false,
+        staffAccommodationNights: 0,
+        staffRoomType: 'twin',
+        staffRoomPrice: 0,
+        mealStandardClient: 0,
+        mealStandardStaff: 0,
+        busFee: 0,
+        otherTransports: [],
+      },
+      dailyExpenses: [
+        {
+          day: 1,
+          accommodationAmount: 0,
+          staffAccommodationAmount: 0,
+          lunch: {
+            enabled: true,
+            clientMealType: 'table',
+            tableCount: 0,
+            clientCount: 0,
+            pricePerPerson: 0,
+            staffMealType: 'with-group',
+            amount: 0,
+            restaurantName: '',
+          },
+          dinner: {
+            enabled: true,
+            clientMealType: 'table',
+            tableCount: 0,
+            clientCount: 0,
+            pricePerPerson: 0,
+            staffMealType: 'with-group',
+            amount: 0,
+            restaurantName: '',
+          },
+          staffFees: {},
+          singleItems: [],
+        },
+      ],
+      otherExpenses: {
+        insurance: {
+          pricePerPerson: 0,
+          days: 1,
+          totalAmount: 0,
+        },
+        serviceFeeMode: 'percent',
+        serviceFeePercent: 10,
+        serviceFeePerPerson: 0,
+        serviceFeeDays: 1,
+        taxPercent: 1,
+        reserveFund: 0,
+        materials: [],
+        otherExpenses: [],
+      },
+    };
+    
+    // 保存到 localStorage
+    localStorage.setItem(`temp_project_${tempId}`, JSON.stringify(tempProjectData));
+    
+    // 跳转到项目页面
+    router.push(`/project/${tempId}`);
   };
 
   // 删除项目
