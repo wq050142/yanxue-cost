@@ -628,33 +628,6 @@ export default function Home() {
                 </div>
               </div>
             </div>
-
-            {/* 功能简介 */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mt-12">
-              <div className="bg-white/80 backdrop-blur rounded-2xl p-6 shadow-sm border border-slate-200/50">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center mb-4">
-                  <Plus className="w-6 h-6 text-blue-600" />
-                </div>
-                <h3 className="text-lg font-semibold text-slate-900 mb-2">新建报价</h3>
-                <p className="text-sm text-slate-500">快速创建研学项目报价单</p>
-              </div>
-              
-              <div className="bg-white/80 backdrop-blur rounded-2xl p-6 shadow-sm border border-slate-200/50">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center mb-4">
-                  <FolderIcon className="w-6 h-6 text-green-600" />
-                </div>
-                <h3 className="text-lg font-semibold text-slate-900 mb-2">项目管理</h3>
-                <p className="text-sm text-slate-500">登录后保存和管理所有项目</p>
-              </div>
-              
-              <div className="bg-white/80 backdrop-blur rounded-2xl p-6 shadow-sm border border-slate-200/50">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-50 to-amber-100 flex items-center justify-center mb-4">
-                  <TrendingUp className="w-6 h-6 text-amber-600" />
-                </div>
-                <h3 className="text-lg font-semibold text-slate-900 mb-2">利润分析</h3>
-                <p className="text-sm text-slate-500">实时查看项目利润情况</p>
-              </div>
-            </div>
           </div>
         ) : projectsLoading ? (
           <div className="flex items-center justify-center py-20">
