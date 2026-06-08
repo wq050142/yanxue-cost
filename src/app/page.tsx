@@ -594,15 +594,39 @@ export default function Home() {
               </p>
             </div>
 
-            {/* 核心动作 - 未登录 */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
-              <Button 
-                onClick={() => setIsAuthModalOpen(true)} 
-                className="gap-3 px-8 py-6 text-base md:text-lg font-medium bg-black text-white hover:bg-slate-800 rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 w-full sm:w-auto"
+            {/* 核心动作 - 未登录也可以直接使用 */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-12">
+              {/* 新建报价 */}
+              <div 
+                className="bg-white/80 backdrop-blur rounded-2xl p-6 shadow-sm border border-slate-200/50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 cursor-pointer"
+                onClick={() => setIsDialogOpen(true)}
               >
-                <LogIn className="w-5 h-5" />
-                开始使用
-              </Button>
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center flex-shrink-0">
+                    <Plus className="w-8 h-8 text-blue-600" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-lg md:text-xl font-semibold text-slate-900 mb-1">新建报价</h3>
+                    <p className="text-sm text-slate-500">无需登录，快速开始报价</p>
+                  </div>
+                </div>
+              </div>
+              
+              {/* 登录/注册 */}
+              <div 
+                className="bg-white/80 backdrop-blur rounded-2xl p-6 shadow-sm border border-slate-200/50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 cursor-pointer"
+                onClick={() => setIsAuthModalOpen(true)}
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-50 to-purple-100 flex items-center justify-center flex-shrink-0">
+                    <LogIn className="w-8 h-8 text-purple-600" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-lg md:text-xl font-semibold text-slate-900 mb-1">登录 / 注册</h3>
+                    <p className="text-sm text-slate-500">保存项目，云端同步</p>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* 功能简介 */}
@@ -616,16 +640,16 @@ export default function Home() {
               </div>
               
               <div className="bg-white/80 backdrop-blur rounded-2xl p-6 shadow-sm border border-slate-200/50">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-50 to-purple-100 flex items-center justify-center mb-4">
-                  <FolderIcon className="w-6 h-6 text-purple-600" />
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center mb-4">
+                  <FolderIcon className="w-6 h-6 text-green-600" />
                 </div>
                 <h3 className="text-lg font-semibold text-slate-900 mb-2">项目管理</h3>
-                <p className="text-sm text-slate-500">轻松组织和管理所有报价项目</p>
+                <p className="text-sm text-slate-500">登录后保存和管理所有项目</p>
               </div>
               
               <div className="bg-white/80 backdrop-blur rounded-2xl p-6 shadow-sm border border-slate-200/50">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center mb-4">
-                  <TrendingUp className="w-6 h-6 text-green-600" />
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-50 to-amber-100 flex items-center justify-center mb-4">
+                  <TrendingUp className="w-6 h-6 text-amber-600" />
                 </div>
                 <h3 className="text-lg font-semibold text-slate-900 mb-2">利润分析</h3>
                 <p className="text-sm text-slate-500">实时查看项目利润情况</p>
