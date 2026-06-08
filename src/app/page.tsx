@@ -416,132 +416,44 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
       {/* Header - Apple Style */}
-      <header className="border-b border-gray-200/50 bg-white/95 backdrop-blur-xl sticky top-0 z-50">
+      <header className="border-b border-slate-200/50 bg-white/85 backdrop-blur-xl sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <img src="/logo.png" alt="Logo" className="w-10 h-10 rounded-xl shadow-sm" />
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-md">
+                <Calculator className="w-6 h-6 text-white" />
+              </div>
               <div>
-                <h1 className="text-xl font-semibold text-gray-900 tracking-tight">研学旅行成本核算</h1>
-                <p className="text-sm text-gray-500">快速核算，精准报价</p>
+                <h1 className="text-xl font-semibold text-slate-900 tracking-tight">研学报价工作台</h1>
               </div>
             </div>
             
             <div className="flex items-center gap-3">
               {user ? (
                 <>
-                  {/* 主要操作按钮 */}
-                  <Button className="gap-2 h-11 px-5 text-base font-medium bg-black text-white hover:bg-gray-800 rounded-lg shadow-sm transition-all duration-200" onClick={() => setIsDialogOpen(true)}>
-                    <Plus className="w-5 h-5" />
-                    <span>新建项目</span>
-                  </Button>
-                  
-                  {/* 移动端：更多操作下拉菜单 */}
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="icon" className="h-9 w-9 md:hidden">
-                        <MoreVertical className="w-4 h-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => setIsFolderDialogOpen(true)}>
-                        <FolderPlus className="w-4 h-4 mr-2" />新建文件夹
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={handleOpenTrash}>
-                        <Archive className="w-4 h-4 mr-2" />回收站
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => setIsChangePasswordOpen(true)}>
-                        <Key className="w-4 h-4 mr-2" />修改密码
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={handleSignOut}>
-                        <LogOut className="w-4 h-4 mr-2" />退出登录
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                  
-                  {/* 桌面端：完整按钮组 */}
-                  <div className="hidden md:flex items-center gap-2">
-                    <Button variant="outline" size="icon" onClick={() => setIsFolderDialogOpen(true)} title="新建文件夹">
-                      <FolderPlus className="w-4 h-4" />
-                    </Button>
-                    
-                    <Button variant="outline" size="icon" onClick={handleOpenTrash} title="回收站">
-                      <Archive className="w-4 h-4" />
-                    </Button>
-                    
-                    <div className="border-l h-6 mx-1"></div>
-                    
-                    {/* 视图切换 */}
-                    <Button 
-                      variant={viewMode === 'card' ? 'default' : 'outline'} 
-                      size="icon" 
-                      onClick={() => setViewMode('card')}
-                      title="卡片视图"
-                    >
-                      <LayoutGrid className="w-4 h-4" />
-                    </Button>
-                    <Button 
-                      variant={viewMode === 'list' ? 'default' : 'outline'} 
-                      size="icon" 
-                      onClick={() => setViewMode('list')}
-                      title="列表视图"
-                    >
-                      <List className="w-4 h-4" />
-                    </Button>
-                    
-                    <div className="border-l h-6 mx-1"></div>
-                    
-                    {/* 多选模式 */}
-                    {isSelectMode ? (
-                      <>
-                        <span className="text-sm text-gray-500">
-                          已选 {selectedProjectIds.size + selectedFolderIds.size} 项
-                        </span>
-                        <Button variant="outline" size="sm" onClick={toggleSelectAll}>
-                          全选
-                        </Button>
-                        <Button variant="outline" size="sm" onClick={() => setIsMoveDialogOpen(true)} disabled={selectedProjectIds.size === 0}>
-                          <Move className="w-4 h-4 mr-1" />
-                          移动
-                        </Button>
-                        <Button variant="outline" size="sm" onClick={() => handleBatchCopy(null)} disabled={selectedProjectIds.size === 0}>
-                          <Copy className="w-4 h-4 mr-1" />
-                          复制
-                        </Button>
-                        <Button variant="destructive" size="sm" onClick={handleBatchDelete} disabled={selectedProjectIds.size + selectedFolderIds.size === 0}>
-                          <Trash2 className="w-4 h-4 mr-1" />
-                          删除
-                        </Button>
-                        <Button variant="ghost" size="sm" onClick={exitSelectMode}>
-                          <X className="w-4 h-4" />
-                        </Button>
-                      </>
-                    ) : (
-                      <Button variant="outline" size="sm" onClick={() => setIsSelectMode(true)}>
-                        <CheckSquare className="w-4 h-4 mr-1" />
-                        多选
-                      </Button>
-                    )}
-                  </div>
-                  
                   {/* 桌面端：用户菜单 */}
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full hidden md:flex">
-                        <User className="w-5 h-5" />
+                      <Button variant="ghost" className="h-10 px-4 rounded-xl hover:bg-slate-100">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center mr-2">
+                          <User className="w-4 h-4 text-blue-600" />
+                        </div>
+                        <span className="text-sm text-slate-700">
+                          {user.email?.split('@')[0]}
+                        </span>
+                        <ChevronRight className="w-4 h-4 text-slate-400 ml-1" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <div className="px-2 py-1.5 text-sm text-gray-600">{user.email}</div>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => setIsChangePasswordOpen(true)}>
+                    <DropdownMenuContent align="end" className="rounded-xl border-slate-200">
+                      <div className="px-3 py-2 text-sm text-slate-600 border-b border-slate-100">{user.email}</div>
+                      <DropdownMenuItem onClick={() => setIsChangePasswordOpen(true)} className="rounded-lg">
                         <Key className="w-4 h-4 mr-2" />
                         修改密码
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={handleSignOut}>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={handleSignOut} className="rounded-lg text-red-600">
                         <LogOut className="w-4 h-4 mr-2" />
                         退出登录
                       </DropdownMenuItem>
@@ -549,10 +461,12 @@ export default function Home() {
                   </DropdownMenu>
                 </>
               ) : (
-                <Button className="gap-2" onClick={() => setIsAuthModalOpen(true)}>
+                <Button 
+                  className="gap-2 px-5 h-10 rounded-xl bg-black text-white hover:bg-slate-800 transition-all duration-200 shadow-sm" 
+                  onClick={() => setIsAuthModalOpen(true)}
+                >
                   <LogIn className="w-4 h-4" />
-                  <span className="hidden sm:inline">登录 / 注册</span>
-                  <span className="sm:hidden">登录</span>
+                  <span>登录 / 注册</span>
                 </Button>
               )}
             </div>
@@ -567,59 +481,60 @@ export default function Home() {
       <ChangePasswordModal open={isChangePasswordOpen} onOpenChange={setIsChangePasswordOpen} />
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-6">
+      <main className="max-w-4xl mx-auto px-4 py-12 md:py-16">
         {!user ? (
-          <div className="flex flex-col items-center justify-center py-16 md:py-24">
-            {/* Hero Section - Apple Style */}
-            <img src="/logo.png" alt="Logo" className="w-24 h-24 md:w-32 md:h-32 rounded-2xl mb-8 md:mb-10 shadow-xl" />
-            
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 md:mb-6 text-center tracking-tight">
-              研学旅行成本核算工具
-            </h2>
-            <p className="text-lg md:text-xl text-gray-500 mb-10 md:mb-12 text-center max-w-2xl px-4 leading-relaxed">
-              专业的研学旅行成本核算与报价管理平台<br />
-              助您高效管理项目、精准核算成本
-            </p>
-            
-            <Button 
-              onClick={() => setIsAuthModalOpen(true)} 
-              className="gap-3 px-8 py-6 text-lg font-medium bg-black text-white hover:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
-            >
-              <LogIn className="w-6 h-6" />
-              登录 / 注册
-            </Button>
-
-            {/* Feature Cards - Apple Style */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-20 md:mt-24 w-full max-w-5xl px-4">
-              <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center mb-6">
-                  <Calculator className="w-7 h-7 text-blue-600" />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">成本核算</h3>
-                <p className="text-base text-gray-500 leading-relaxed">支持半日、一日、多日研学项目，自动计算各项费用</p>
+          /* 未登录状态 - 工作台入口 */
+          <div className="text-center">
+            {/* 欢迎区域 */}
+            <div className="mb-12 md:mb-16">
+              <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center mx-auto mb-8 shadow-lg">
+                <Calculator className="w-10 h-10 md:w-12 md:h-12 text-white" />
               </div>
-              
-              <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-50 to-purple-100 flex items-center justify-center mb-6">
-                  <FileText className="w-7 h-7 text-purple-600" />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">报价管理</h3>
-                <p className="text-base text-gray-500 leading-relaxed">灵活设置报价策略，实时查看利润分析</p>
-              </div>
-              
-              <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center mb-6">
-                  <TrendingUp className="w-7 h-7 text-green-600" />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">数据分析</h3>
-                <p className="text-base text-gray-500 leading-relaxed">清晰的数据展示，支持导出报价单截图</p>
-              </div>
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-4 tracking-tight">
+                研学报价工作台
+              </h2>
+              <p className="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto">
+                专业的研学旅行成本核算与报价管理平台
+              </p>
             </div>
 
-            {/* Contact Developer */}
-            <p className="mt-16 md:mt-20 text-sm md:text-base text-gray-400">
-              联系开发者：17682312594（同微信）
-            </p>
+            {/* 核心动作 - 未登录 */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+              <Button 
+                onClick={() => setIsAuthModalOpen(true)} 
+                className="gap-3 px-8 py-6 text-base md:text-lg font-medium bg-black text-white hover:bg-slate-800 rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 w-full sm:w-auto"
+              >
+                <LogIn className="w-5 h-5" />
+                开始使用
+              </Button>
+            </div>
+
+            {/* 功能简介 */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mt-12">
+              <div className="bg-white/80 backdrop-blur rounded-2xl p-6 shadow-sm border border-slate-200/50">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center mb-4">
+                  <Plus className="w-6 h-6 text-blue-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-slate-900 mb-2">新建报价</h3>
+                <p className="text-sm text-slate-500">快速创建研学项目报价单</p>
+              </div>
+              
+              <div className="bg-white/80 backdrop-blur rounded-2xl p-6 shadow-sm border border-slate-200/50">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-50 to-purple-100 flex items-center justify-center mb-4">
+                  <FolderIcon className="w-6 h-6 text-purple-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-slate-900 mb-2">项目管理</h3>
+                <p className="text-sm text-slate-500">轻松组织和管理所有报价项目</p>
+              </div>
+              
+              <div className="bg-white/80 backdrop-blur rounded-2xl p-6 shadow-sm border border-slate-200/50">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center mb-4">
+                  <TrendingUp className="w-6 h-6 text-green-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-slate-900 mb-2">利润分析</h3>
+                <p className="text-sm text-slate-500">实时查看项目利润情况</p>
+              </div>
+            </div>
           </div>
         ) : projectsLoading ? (
           <div className="flex items-center justify-center py-20">
@@ -627,49 +542,132 @@ export default function Home() {
           </div>
         ) : (
           <>
-            {/* 面包屑导航 */}
-            <div className="flex items-center gap-1 md:gap-2 mb-4 text-sm overflow-x-auto pb-2">
-              <button 
-                onClick={() => setCurrentFolderId(null)} 
-                className={`flex items-center gap-1 hover:text-blue-600 flex-shrink-0 ${!currentFolderId ? 'text-blue-600 font-medium' : 'text-gray-600'}`}
-              >
-                <HomeIcon className="w-4 h-4" />
-                全部项目
-              </button>
-              {currentPath.map((folder, idx) => (
-                <div key={folder.id} className="flex items-center gap-1 md:gap-2 flex-shrink-0">
-                  <ChevronRight className="w-4 h-4 text-gray-400" />
-                  <button 
-                    onClick={() => setCurrentFolderId(folder.id)}
-                    className={`hover:text-blue-600 whitespace-nowrap ${idx === currentPath.length - 1 ? 'text-blue-600 font-medium' : 'text-gray-600'}`}
-                  >
-                    {folder.name}
-                  </button>
-                </div>
-              ))}
+            {/* 欢迎区域 - 登录后 */}
+            <div className="mb-10 md:mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2 tracking-tight">
+                欢迎回来
+              </h2>
+              <p className="text-lg md:text-xl text-slate-500">
+                今天想做点什么？
+              </p>
             </div>
 
-            {projects.length === 0 && childFolders.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-20 md:py-32">
-                <div className="w-32 h-32 md:w-40 md:h-40 rounded-3xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center mb-8 md:mb-10 shadow-inner">
-                  <Calendar className="w-16 h-16 md:w-20 md:h-20 text-gray-400" />
-                </div>
-                <h2 className="text-2xl md:text-3xl font-semibold text-gray-800 mb-3 md:mb-4 tracking-tight">
-                  {currentFolderId ? '这个文件夹是空的' : '还没有项目'}
-                </h2>
-                <p className="text-lg text-gray-500 mb-8 md:mb-10">点击上方"新建项目"开始创建</p>
-                <div className="flex gap-4 md:gap-5">
-                  <Button onClick={() => setIsDialogOpen(true)} className="gap-3 px-6 py-4 text-base font-medium bg-black text-white hover:bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition-all duration-300">
-                    <Plus className="w-5 h-5" />
-                    创建项目
-                  </Button>
-                  <Button variant="outline" onClick={() => setIsFolderDialogOpen(true)} className="gap-3 px-6 py-4 text-base rounded-xl border-2 hover:bg-gray-50 transition-all duration-300">
-                    <FolderPlus className="w-5 h-5" />
-                    新建文件夹
-                  </Button>
+            {/* 核心动作 - 登录后 */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-12">
+              {/* 新建报价 */}
+              <div 
+                className="bg-white/80 backdrop-blur rounded-2xl p-6 shadow-sm border border-slate-200/50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 cursor-pointer"
+                onClick={() => setIsDialogOpen(true)}
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center flex-shrink-0">
+                    <Plus className="w-8 h-8 text-blue-600" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-lg md:text-xl font-semibold text-slate-900 mb-1">新建报价</h3>
+                    <p className="text-sm text-slate-500">从空白开始创建研学报价方案</p>
+                  </div>
                 </div>
               </div>
-            ) : viewMode === 'card' ? (
+              
+              {/* 全部项目 */}
+              <div 
+                className="bg-white/80 backdrop-blur rounded-2xl p-6 shadow-sm border border-slate-200/50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 cursor-pointer"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center flex-shrink-0">
+                    <FolderIcon className="w-8 h-8 text-green-600" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-lg md:text-xl font-semibold text-slate-900 mb-1">打开项目</h3>
+                    <p className="text-sm text-slate-500">继续编辑已有的研学方案</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 最近项目 */}
+            {projects.length > 0 && (
+              <div>
+                <div className="flex items-center justify-between mb-5">
+                  <h3 className="text-lg font-semibold text-slate-900">最近打开</h3>
+                  <Button 
+                    variant="ghost" 
+                    className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-xl"
+                    onClick={() => setViewMode(viewMode === 'card' ? 'list' : 'card')}
+                  >
+                    全部项目
+                    <ChevronRight className="w-4 h-4 ml-1" />
+                  </Button>
+                </div>
+                
+                <div className="space-y-3">
+                  {/* 最近项目列表 */}
+                  {[...projects].sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()).slice(0, 5).map((project, idx) => (
+                    <div 
+                      key={project.id}
+                      className="bg-white/80 backdrop-blur rounded-xl p-4 shadow-sm border border-slate-200/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer"
+                      onClick={() => router.push(`/project/${project.id}`)}
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-3 min-w-0 flex-1">
+                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                            idx === 0 ? 'bg-gradient-to-br from-purple-50 to-purple-100' :
+                            idx === 1 ? 'bg-gradient-to-br from-green-50 to-green-100' :
+                            idx === 2 ? 'bg-gradient-to-br from-amber-50 to-amber-100' :
+                            'bg-gradient-to-br from-slate-50 to-slate-100'
+                          }`}>
+                            <HomeIcon className={`w-5 h-5 ${
+                              idx === 0 ? 'text-purple-600' :
+                              idx === 1 ? 'text-green-600' :
+                              idx === 2 ? 'text-amber-600' :
+                              'text-slate-600'
+                            }`} />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="text-base font-medium text-slate-900 truncate" title={project.name}>{project.name}</div>
+                            <div className="flex items-center gap-3 mt-1">
+                              <span className={`text-xs px-2 py-0.5 rounded-lg ${
+                                project.type === 'half-day' ? 'bg-green-100 text-green-700' :
+                                project.type === 'one-day' ? 'bg-blue-100 text-blue-700' :
+                                'bg-purple-100 text-purple-700'
+                              }`}>
+                                {PROJECT_TYPE_LABELS[project.type]}
+                              </span>
+                              <span className="text-xs text-slate-400">
+                                {new Date(project.updatedAt).toLocaleDateString()} 编辑
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <MoreVertical className="w-4 h-4 text-slate-400" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* 如果没有项目 */}
+            {projects.length === 0 && childFolders.length === 0 && (
+              <div className="text-center py-16">
+                <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center mx-auto mb-6">
+                  <Calendar className="w-12 h-12 text-slate-400" />
+                </div>
+                <h3 className="text-xl font-semibold text-slate-800 mb-2">还没有项目</h3>
+                <p className="text-slate-500 mb-6">点击上方"新建报价"开始创建</p>
+                <Button 
+                  onClick={() => setIsDialogOpen(true)} 
+                  className="gap-3 px-6 py-3 text-base font-medium bg-black text-white hover:bg-slate-800 rounded-xl shadow-sm transition-all duration-200"
+                >
+                  <Plus className="w-5 h-5" />
+                  新建报价
+                </Button>
+              </div>
+            )}
+
+            {/* 如果有更多项目，显示全部项目区域 */}
+            {currentFolderId || (projects.length > 5 && childFolders.length > 0) ? (
               /* 卡片视图 - Apple Style */
               <div className="space-y-6">
                 {/* 文件夹 */}
