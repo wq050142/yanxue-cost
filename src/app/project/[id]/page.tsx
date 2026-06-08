@@ -59,39 +59,50 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
   const isTempProject = id.startsWith('temp_');
   
   useEffect(() => {
-    if (authLoading) return;
-    
-    const loadData = async () => {
-      try {
-        setIsLoading(true);
-        
-        // 如果是临时项目，从 localStorage 读取
-        if (isTempProject) {
+    // 临时项目不需要等待auth loading，立即加载
+    if (isTempProject) {
+      const loadTempData = () => {
+        try {
+          setIsLoading(true);
           const tempData = localStorage.getItem(`temp_project_${id}`);
           if (tempData) {
             const parsedData = JSON.parse(tempData);
-            // 迁移旧数据格式
             const safeData = migrateOldData(parsedData);
             setProjectData(safeData);
           } else {
             alert('临时项目不存在或已过期');
             router.push('/');
           }
+        } catch (error) {
+          console.error('加载临时项目失败:', error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      loadTempData();
+      return;
+    }
+    
+    // 非临时项目的处理逻辑
+    if (authLoading) return;
+    
+    const loadData = async () => {
+      try {
+        setIsLoading(true);
+        
+        // 非临时项目需要登录
+        if (!user) {
+          router.push('/');
+          return;
+        }
+        
+        const data = await getProjectData(id);
+        if (data) {
+          const safeData = migrateOldData(data);
+          setProjectData(safeData);
         } else {
-          // 非临时项目需要登录
-          if (!user) {
-            router.push('/');
-            return;
-          }
-          const data = await getProjectData(id);
-          if (data) {
-            // 迁移旧数据格式
-            const safeData = migrateOldData(data);
-            setProjectData(safeData);
-          } else {
-            alert('项目不存在或无权限访问');
-            router.push('/');
-          }
+          alert('项目不存在或无权限访问');
+          router.push('/');
         }
       } catch (error) {
         console.error('加载项目失败:', error);
