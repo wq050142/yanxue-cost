@@ -847,7 +847,8 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
     </div>
   );
   
-  if (!user) return (
+  // 临时项目不需要登录检查
+  if (!user && !isTempProject) return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="text-center">
         <LogIn className="w-16 h-16 text-gray-300 mx-auto mb-4" />
