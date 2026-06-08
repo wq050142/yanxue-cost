@@ -40,7 +40,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const parsed = JSON.parse(savedSession) as Session;
         setSession(parsed);
         setUser(parsed.user);
-        
+
+        // 带超时的 session 验证，避免 API 卡住导致 loading 一直为 true
+        const timeoutId = setTimeout(() => {
+          // 超时后强制完成加载（保留现有 session，让页面先渲染）
+          setLoading(false);
+        }, 2000);
+
         // 验证 session 是否有效
         fetch('/api/auth/me', {
           headers: { 'Authorization': `Bearer ${parsed.access_token}` },
@@ -59,12 +65,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setSession(null);
             setUser(null);
           })
-          .finally(() => setLoading(false));
+          .finally(() => {
+            clearTimeout(timeoutId);
+            setLoading(false);
+          });
       } catch {
         localStorage.removeItem(SESSION_KEY);
         setLoading(false);
       }
     } else {
+      // 没有 session，立即完成 loading
       setLoading(false);
     }
   }, []);
