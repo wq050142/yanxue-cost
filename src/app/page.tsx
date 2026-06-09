@@ -26,6 +26,7 @@ export default function Home() {
   // 项目状态
   const [projects, setProjects] = useState<Project[]>([]);
   const [projectsLoading, setProjectsLoading] = useState(true);
+  const [tempProjects, setTempProjects] = useState<Project[]>([]);
   
   // 对话框状态
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -72,7 +73,41 @@ export default function Home() {
     } else if (!authLoading && !user) {
       setProjectsLoading(false);
     }
+    loadTempProjects();
   }, [user, authLoading]);
+
+  // 加载本地临时项目
+  const loadTempProjects = () => {
+    try {
+      const tempList: Project[] = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key?.startsWith('temp_project_')) {
+          try {
+            const data = JSON.parse(localStorage.getItem(key) || '');
+            if (data?.project) {
+              tempList.push({
+                id: data.project.id,
+                name: data.project.name,
+                type: data.project.type,
+                remark: data.project.remark || '',
+                folderId: null,
+                createdAt: data.project.createdAt || new Date().toISOString(),
+                updatedAt: data.project.updatedAt || new Date().toISOString(),
+              });
+            }
+          } catch (e) {
+            // 忽略解析错误
+          }
+        }
+      }
+      // 按更新时间倒序
+      tempList.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+      setTempProjects(tempList);
+    } catch (e) {
+      console.error('加载临时项目失败:', e);
+    }
+  };
 
   const loadData = async () => {
     setProjectsLoading(true);
@@ -199,6 +234,16 @@ export default function Home() {
 
   // 删除项目
   const handleDeleteProject = async (projectId: string) => {
+    // 临时项目：本地删除
+    if (projectId.startsWith('temp_')) {
+      if (confirm('确定要删除这个临时项目吗？')) {
+        localStorage.removeItem(`temp_project_${projectId}`);
+        loadTempProjects();
+        alert('项目已删除');
+      }
+      return;
+    }
+    
     if (confirm('确定要删除这个项目吗？删除后可在回收站找回。')) {
       const success = await deleteProject(projectId);
       if (success) loadData();
@@ -208,6 +253,38 @@ export default function Home() {
 
   // 复制项目
   const handleCopyProject = async (projectId: string) => {
+    // 临时项目：本地复制
+    if (projectId.startsWith('temp_')) {
+      const tempData = localStorage.getItem(`temp_project_${projectId}`);
+      if (tempData) {
+        try {
+          const parsedData = JSON.parse(tempData);
+          const newTempId = generateTempId();
+          const newData = {
+            ...parsedData,
+            project: {
+              ...parsedData.project,
+              id: newTempId,
+              name: parsedData.project.name + ' (副本)',
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            },
+          };
+          localStorage.setItem(`temp_project_${newTempId}`, JSON.stringify(newData));
+          loadTempProjects();
+          alert('项目复制成功！');
+          return;
+        } catch (e) {
+          console.error('复制临时项目失败:', e);
+          alert('复制项目失败，请重试');
+          return;
+        }
+      }
+      alert('找不到要复制的项目');
+      return;
+    }
+    
+    // 正式项目：后端复制
     if (!user) {
       if (confirm('复制项目需要先登录，是否现在登录？')) {
         setIsAuthModalOpen(true);
@@ -226,7 +303,7 @@ export default function Home() {
 
   // 重命名项目
   const handleRenameProject = (projectId: string) => {
-    const project = projects.find(p => p.id === projectId);
+    const project = projects.find(p => p.id === projectId) || tempProjects.find(p => p.id === projectId);
     if (project) {
       setRenameProjectId(projectId);
       setRenameProjectName(project.name);
@@ -239,6 +316,27 @@ export default function Home() {
       alert('请输入项目名称');
       return;
     }
+    
+    // 临时项目：本地重命名
+    if (renameProjectId.startsWith('temp_')) {
+      const tempData = localStorage.getItem(`temp_project_${renameProjectId}`);
+      if (tempData) {
+        try {
+          const parsedData = JSON.parse(tempData);
+          parsedData.project.name = renameProjectName.trim();
+          parsedData.project.updatedAt = new Date().toISOString();
+          localStorage.setItem(`temp_project_${renameProjectId}`, JSON.stringify(parsedData));
+          setIsRenameDialogOpen(false);
+          loadTempProjects();
+          alert('重命名成功！');
+        } catch (e) {
+          console.error('重命名临时项目失败:', e);
+          alert('重命名失败，请重试');
+        }
+      }
+      return;
+    }
+    
     const success = await updateProjectName(renameProjectId, renameProjectName.trim());
     if (success) {
       setIsRenameDialogOpen(false);
@@ -445,9 +543,9 @@ export default function Home() {
                 </Button>
               </div>
               
-              {projects.length > 0 ? (
+              {(projects.length > 0 || tempProjects.length > 0) ? (
                 <div className="space-y-3">
-                  {[...projects].sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()).slice(0, 5).map((project, idx) => (
+                  {[...tempProjects, ...projects].sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()).slice(0, 5).map((project, idx) => (
                     <div 
                       key={project.id}
                       className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 cursor-pointer"

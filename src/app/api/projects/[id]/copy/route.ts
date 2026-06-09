@@ -18,9 +18,15 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const originalResult = await query('SELECT * FROM projects WHERE id = $1 AND user_id = $2', [id, userId]);
     if (originalResult.rows.length === 0) return NextResponse.json({ error: '项目不存在或无权限' }, { status: 404 });
     const original = originalResult.rows[0];
+    
+    // 确保 JSON 字段是字符串类型
+    const coreConfig = typeof original.core_config === 'string' ? original.core_config : JSON.stringify(original.core_config);
+    const dailyExpenses = typeof original.daily_expenses === 'string' ? original.daily_expenses : JSON.stringify(original.daily_expenses);
+    const otherExpenses = typeof original.other_expenses === 'string' ? original.other_expenses : JSON.stringify(original.other_expenses);
+    
     const result = await query(
       'INSERT INTO projects (user_id, name, type, remark, core_config, daily_expenses, other_expenses, folder_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
-      [userId, original.name + ' (副本)', original.type, original.remark, original.core_config, original.daily_expenses, original.other_expenses, original.folder_id]
+      [userId, original.name + ' (副本)', original.type, original.remark, coreConfig, dailyExpenses, otherExpenses, original.folder_id]
     );
     return NextResponse.json({ project: result.rows[0] });
   } catch (err) {
