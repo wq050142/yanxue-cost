@@ -208,9 +208,20 @@ export default function Home() {
 
   // 复制项目
   const handleCopyProject = async (projectId: string) => {
+    if (!user) {
+      if (confirm('复制项目需要先登录，是否现在登录？')) {
+        setIsAuthModalOpen(true);
+      }
+      return;
+    }
+    
     const newProject = await copyProject(projectId);
-    if (newProject) loadData();
-    else alert('复制项目失败，请重试');
+    if (newProject) {
+      loadData();
+      alert('项目复制成功！');
+    } else {
+      alert('复制项目失败，请重试');
+    }
   };
 
   // 重命名项目
